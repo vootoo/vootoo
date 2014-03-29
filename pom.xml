@@ -6,15 +6,15 @@
     <version>7</version>
   </parent>
 
-  <groupId>org.poly</groupId>
-  <artifactId>poly</artifactId>
+  <groupId>org.vootoo</groupId>
+  <artifactId>vootoo</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>poly</name>
+  <name>vootoo</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<poly.version>0.0.1-SNAPSHOT</poly.version>
+  	<vootoo.version>0.0.1-SNAPSHOT</vootoo.version>
   </properties>
 
   <dependencyManagement>
@@ -28,9 +28,9 @@
   	</dependencies>
   </dependencyManagement>
   <scm>
-  	<connection>scm:git:git://github.com/chenlb/poly.git</connection>
-  	<url>https://github.com/chenlb/poly</url>
-  	<developerConnection>scm:git:git@github.com:chenlb/poly.git</developerConnection>
+  	<connection>scm:git:git://github.com/chenlb/vootoo.git</connection>
+  	<url>https://github.com/chenlb/vootoo</url>
+  	<developerConnection>scm:git:git@github.com:chenlb/vootoo.git</developerConnection>
   </scm>
   <organization>
   	<url>http://blog.chenlb.com</url>
@@ -69,7 +69,7 @@
   	</plugins>
   </build>
   <modules>
-  	<module>poly-client</module>
-  	<module>poly-core</module>
+  	<module>vootoo-client</module>
+  	<module>vootoo-core</module>
   </modules>
 </project>
