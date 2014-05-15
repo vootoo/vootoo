@@ -52,6 +52,9 @@ public class InCollectorFilterable extends ValueSourceCollectorFilterable {
 	@Override
 	public boolean matches(int doc) {
 		Object obj = functionValues.objectVal(doc);
+    if(obj == null) {
+      return false;
+    }
 		if(inObjValues == null) {
 			inObjValues = new HashSet<Object>(inValues.length * 2);
 			for(Object objValue : parseValue(inValues, obj)) {

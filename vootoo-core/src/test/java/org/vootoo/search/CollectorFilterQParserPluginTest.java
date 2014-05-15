@@ -64,6 +64,10 @@ public class CollectorFilterQParserPluginTest extends AbstractSolrTestCase {
         "//*[@numFound='2']", "//float[@name='score']='1.0'",
         "//result/doc[1]/int[@name='id'][.='2']",
         "//result/doc[2]/int[@name='id'][.='3']");
+
+    // 测试没有值的字段
+    assertQ(req("q", "id:[1 TO 3]", "fq", "{!cf name=in}my_long:(3,4)"),
+        "//*[@numFound='0']");
   }
 
   @Test
@@ -100,5 +104,9 @@ public class CollectorFilterQParserPluginTest extends AbstractSolrTestCase {
         "//*[@numFound='2']", "//float[@name='score']='1.0'",
         "//result/doc[1]/int[@name='id'][.='1']",
         "//result/doc[2]/int[@name='id'][.='4']");
+
+    // 测试没有值的字段
+    assertQ(req("q", "id:3", "fq", "{!cf name=range}my_long:[3 TO 4]"),
+        "//*[@numFound='0']");
   }
 }
