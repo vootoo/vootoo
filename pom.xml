@@ -8,13 +8,13 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>vootoo</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<vootoo.version>0.0.1-SNAPSHOT</vootoo.version>
+  	<vootoo.version>0.1</vootoo.version>
   </properties>
 
   <dependencyManagement>
