@@ -8,13 +8,13 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>vootoo</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<vootoo.version>0.0.1-SNAPSHOT</vootoo.version>
+  	<vootoo.version>0.1</vootoo.version>
   </properties>
 
   <dependencyManagement>
@@ -38,11 +38,6 @@
 
   <build>
   	<plugins>
-  		<!-- <plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-release-plugin</artifactId>
-			<version>2.2.1</version>
-  		</plugin> -->
   		<plugin>
 		  <groupId>org.apache.maven.plugins</groupId>
 		  <artifactId>maven-compiler-plugin</artifactId>
