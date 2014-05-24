@@ -9,7 +9,7 @@
   <artifactId>vootoo-core</artifactId>
   <version>${vootoo.version}</version>
     <properties>
-            <solr.version>4.7.2</solr.version>
+            <solr.version>4.8.1</solr.version>
     </properties>
   <dependencies>
   	<dependency>
