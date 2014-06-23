@@ -1,0 +1,22 @@
+package org.vootoo.client.netty.protocol;
+option java_package = "org.vootoo.client.netty.protocol";
+option java_outer_classname = "SolrProtocol";
+option optimize_for = SPEED;
+
+message SolrRequest {
+	required int64 rid = 1;
+	optional string coreName =2;
+	required string path = 3;
+	required bytes params = 4;
+	repeated bytes streams = 5;
+}
+
+message SolrResponse {
+	required int64 rid = 1;
+	// 1=javabin, 2=json, 3=avro
+	// 4=csv, 5=xml, 6=python, 7=php, 8=phps
+	optional int32 responseFormat = 2;
+	optional bytes response = 3;
+	optional int32 errorCode = 4;
+	optional string errorStr = 5;
+}

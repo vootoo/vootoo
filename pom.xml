@@ -8,23 +8,43 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.1</version>
-  <name>vootoo</name>
+  <version>0.2-SNAPSHOT</version>
+  <name>vootoo ${version}</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<vootoo.version>0.1</vootoo.version>
+    <solr.version>4.7.2</solr.version>
+    <netty.version>4.0.19.Final</netty.version>
   </properties>
+
+  <dependencies>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.10</version>
+          <scope>test</scope>
+      </dependency>
+  </dependencies>
 
   <dependencyManagement>
   	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vootoo</groupId>
+            <artifactId>vootoo-client</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vootoo</groupId>
+            <artifactId>vootoo-core</artifactId>
+            <version>${version}</version>
+        </dependency>
+
   	</dependencies>
   </dependencyManagement>
   <scm>
@@ -66,5 +86,6 @@
   <modules>
   	<module>vootoo-client</module>
   	<module>vootoo-core</module>
+      <module>vootoo-server</module>
   </modules>
 </project>
