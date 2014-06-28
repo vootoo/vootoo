@@ -12,12 +12,10 @@
   	<dependency>
   		<groupId>org.apache.solr</groupId>
   		<artifactId>solr-core</artifactId>
-  		<version>${solr.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.solr</groupId>
   		<artifactId>solr-test-framework</artifactId>
-  		<version>${solr.version}</version>
   		<scope>test</scope>
   	</dependency>
 	<dependency>
