@@ -3,24 +3,19 @@
   <parent>
     <artifactId>vootoo</artifactId>
     <groupId>org.vootoo</groupId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>vootoo-core</artifactId>
-  <version>${vootoo.version}</version>
-    <properties>
-            <solr.version>4.8.1</solr.version>
-    </properties>
+    <name>vootoo-core ${version}</name>
   <dependencies>
   	<dependency>
   		<groupId>org.apache.solr</groupId>
   		<artifactId>solr-core</artifactId>
-  		<version>${solr.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.solr</groupId>
   		<artifactId>solr-test-framework</artifactId>
-  		<version>${solr.version}</version>
   		<scope>test</scope>
   	</dependency>
 	<dependency>
@@ -52,10 +47,5 @@
 		<version>1.0.13</version>
 		<scope>test</scope>
 	</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
   </dependencies>
 </project>
