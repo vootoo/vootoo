@@ -15,7 +15,7 @@
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   	<solr.version>4.10.3</solr.version>
-  <netty.version>4.0.19.Final</netty.version>
+    <netty.version>4.0.25.Final</netty.version>
   </properties>
 
   <dependencies>
@@ -54,7 +54,11 @@
             <artifactId>vootoo-core</artifactId>
             <version>${version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
   	</dependencies>
   </dependencyManagement>
   <scm>
