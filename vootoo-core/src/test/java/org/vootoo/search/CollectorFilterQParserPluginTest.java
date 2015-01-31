@@ -109,4 +109,48 @@ public class CollectorFilterQParserPluginTest extends AbstractSolrTestCase {
     assertQ(req("q", "id:3", "fq", "{!cf name=range}my_long:[3 TO 4]"),
         "//*[@numFound='0']");
   }
+
+  @Test
+  public void test_collect_filter_bit() {
+    assertU(adoc("id", "1", "my_int", "0"));
+    assertU(adoc("id", "2", "my_int", "2"));
+    assertU(adoc("id", "3", "my_int", "3"));
+    assertU(adoc("id", "4", "my_int", "4"));
+    assertU(commit());
+
+    assertQ(req("fl", "*,score", "q", "*:*"), "//*[@numFound='4']",
+        "//float[@name='score']='1.0'",
+        "//result/doc[1]/int[@name='id'][.='1']",
+        "//result/doc[2]/int[@name='id'][.='2']",
+        "//result/doc[3]/int[@name='id'][.='3']",
+        "//result/doc[4]/int[@name='id'][.='4']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=bit}my_int:(0b10)"),
+        "//*[@numFound='2']",
+        "//result/doc[1]/int[@name='id'][.='2']",
+        "//result/doc[2]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=bit}my_int:(0x1)"),
+        "//*[@numFound='1']",
+        "//result/doc[1]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=bit}my_int:(3)"),
+        "//*[@numFound='2']",
+        "//result/doc[1]/int[@name='id'][.='2']",
+        "//result/doc[2]/int[@name='id'][.='3']");
+
+    //test contain bit
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(0b10)"),
+        "//*[@numFound='2']",
+        "//result/doc[1]/int[@name='id'][.='2']",
+        "//result/doc[2]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(0x1)"),
+        "//*[@numFound='1']",
+        "//result/doc[1]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(3)"),
+        "//*[@numFound='1']",
+        "//result/doc[1]/int[@name='id'][.='3']");
+  }
 }

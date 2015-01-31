@@ -17,11 +17,18 @@
 
 package org.vootoo.search;
 
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
+
+import java.io.IOException;
+import java.util.Map;
 
 public abstract class ValueSourceCollectorFilterable extends CollectorFilterable {
 
   protected ValueSource valueSource;
+
+  protected FunctionValues functionValues;
 
   public ValueSourceCollectorFilterable(ValueSource valueSource) {
     this.valueSource = valueSource;
@@ -29,6 +36,11 @@ public abstract class ValueSourceCollectorFilterable extends CollectorFilterable
 
   public ValueSource getValueSource() {
     return valueSource;
+  }
+
+  @Override
+  public void setNextReader(@SuppressWarnings("rawtypes") Map context, AtomicReaderContext readerContext) throws IOException {
+    functionValues = valueSource.getValues(context, readerContext);
   }
 
   @Override

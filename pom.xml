@@ -8,31 +8,31 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <name>vootoo ${version}</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <solr.version>4.9.0</solr.version>
-    <netty.version>4.0.19.Final</netty.version>
+  	<solr.version>4.10.3</solr.version>
+  <netty.version>4.0.19.Final</netty.version>
   </properties>
 
   <dependencies>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.10</version>
-          <scope>test</scope>
-      </dependency>
-  </dependencies>
-
-  <dependencyManagement>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+  	</dependencies>
+    <dependencyManagement>
   	<dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-test-framework</artifactId>
+            <version>${solr.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -43,12 +43,6 @@
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
             <version>${solr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-test-framework</artifactId>
-            <version>${solr.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.vootoo</groupId>
@@ -102,6 +96,6 @@
   <modules>
   	<module>vootoo-client</module>
   	<module>vootoo-core</module>
-    <module>vootoo-server</module>
+  <module>vootoo-server</module>
   </modules>
 </project>
