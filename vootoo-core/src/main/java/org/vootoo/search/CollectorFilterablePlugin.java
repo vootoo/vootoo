@@ -17,16 +17,14 @@
 
 package org.vootoo.search;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.search.SyntaxError;
 import org.apache.solr.search.function.ValueSourceRangeFilter;
+import org.vootoo.search.function.filter.BitCollectorFilterablePlugin;
 import org.vootoo.search.function.filter.InCollectorFilterablePlugin;
 import org.vootoo.search.function.filter.RangeCollectorFilterablePlugin;
 
@@ -40,6 +38,7 @@ public abstract class CollectorFilterablePlugin {
   static {
     standardPlugins.put("in", new InCollectorFilterablePlugin());
     standardPlugins.put("range", new RangeCollectorFilterablePlugin());
+    standardPlugins.put("bit", new BitCollectorFilterablePlugin());
   }
 
   /** return a {@link CollectorFilterable} */
@@ -180,5 +179,46 @@ public abstract class CollectorFilterablePlugin {
     }
 
     return new ValueSourceRangeFilter(vs, l, u, includeLower, includeUpper);
+  }
+
+  private static Map<String, Boolean> radix_16;
+  static {
+    Map<String, Boolean> map = new HashMap<>(4);
+    // 16 radix
+    map.put("0x", Boolean.TRUE);
+    map.put("0X", Boolean.TRUE);
+
+    // 2 radix
+    map.put("0b", Boolean.FALSE);
+    map.put("0B", Boolean.FALSE);
+
+    radix_16 = Collections.unmodifiableMap(map);
+  }
+
+  /**
+   * Long.parseLong and can parse 0x or 0b radix number
+   * @throws NumberFormatException
+   */
+  public static Long parseLongExt(String longStr) {
+    try {
+      return Long.parseLong(longStr);
+    } catch (NumberFormatException e) {
+      if(longStr.length() > 2) {
+        //try parse 0x or 0b
+        String lstr = longStr.substring(0, 2);
+        Boolean isRadix16 = radix_16.get(lstr);
+        if(isRadix16 == null) {
+          throw e;
+        } else {
+          if(isRadix16) {
+            return Long.parseLong(longStr.substring(2), 16);
+          } else {
+            return Long.parseLong(longStr.substring(2), 2);
+          }
+        }
+      } else {
+        throw e;
+      }
+    }
   }
 }

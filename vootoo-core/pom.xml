@@ -3,20 +3,20 @@
   <parent>
     <artifactId>vootoo</artifactId>
     <groupId>org.vootoo</groupId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>vootoo-core</artifactId>
     <name>vootoo-core ${version}</name>
   <dependencies>
+	  <dependency>
+		  <groupId>org.apache.solr</groupId>
+		  <artifactId>solr-test-framework</artifactId>
+		  <scope>test</scope>
+	  </dependency>
   	<dependency>
   		<groupId>org.apache.solr</groupId>
   		<artifactId>solr-core</artifactId>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.solr</groupId>
-  		<artifactId>solr-test-framework</artifactId>
-  		<scope>test</scope>
   	</dependency>
 	<dependency>
   		<groupId>org.slf4j</groupId>
