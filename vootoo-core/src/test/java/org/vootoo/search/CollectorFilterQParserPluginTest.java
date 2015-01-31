@@ -138,5 +138,19 @@ public class CollectorFilterQParserPluginTest extends AbstractSolrTestCase {
         "//*[@numFound='2']",
         "//result/doc[1]/int[@name='id'][.='2']",
         "//result/doc[2]/int[@name='id'][.='3']");
+
+    //test contain bit
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(0b10)"),
+        "//*[@numFound='2']",
+        "//result/doc[1]/int[@name='id'][.='2']",
+        "//result/doc[2]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(0x1)"),
+        "//*[@numFound='1']",
+        "//result/doc[1]/int[@name='id'][.='3']");
+
+    assertQ(req("q", "*:*", "fq", "{!cf name=cbit}my_int:(3)"),
+        "//*[@numFound='1']",
+        "//result/doc[1]/int[@name='id'][.='3']");
   }
 }

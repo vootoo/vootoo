@@ -27,11 +27,12 @@ import org.vootoo.search.CollectorFilterablePlugin;
 import java.util.List;
 
 /**
- * fq={!cf name=bit}bit:(0b01100)
+ * fq={!cf name=bit}bit_field:(0b01100)
  */
 public class BitCollectorFilterablePlugin extends CollectorFilterablePlugin {
 
-  public static final String NAME = "bit";
+  public static final String NAME_BIT = "bit";
+  public static final String NAME_CONTAIN_BIT = "cbit";
 
   @Override
   public CollectorFilterable createCollectorFilterable(String qstr,
@@ -48,17 +49,21 @@ public class BitCollectorFilterablePlugin extends CollectorFilterablePlugin {
       try {
         qv = parseLongExt(lv);
       } catch (NumberFormatException e) {
-        throw new SyntaxError(lv+" can't parse long", e);
+        throw new SyntaxError(lv+" can't parse long for '"+getName()+"' cf", e);
       }
       if(qv != null) {
         queryBit |= qv.longValue();
       }
     }
+    return createCollectorFilterable(valueSource, queryBit);
+  }
+
+  protected CollectorFilterable createCollectorFilterable(ValueSource valueSource, long queryBit) {
     return new BitCollectorFilterable(valueSource, queryBit);
   }
 
   @Override
   public String getName() {
-    return NAME;
+    return NAME_BIT;
   }
 }

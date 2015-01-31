@@ -25,6 +25,7 @@ import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.search.SyntaxError;
 import org.apache.solr.search.function.ValueSourceRangeFilter;
 import org.vootoo.search.function.filter.BitCollectorFilterablePlugin;
+import org.vootoo.search.function.filter.BitContainCollectorFilterablePlugin;
 import org.vootoo.search.function.filter.InCollectorFilterablePlugin;
 import org.vootoo.search.function.filter.RangeCollectorFilterablePlugin;
 
@@ -39,6 +40,7 @@ public abstract class CollectorFilterablePlugin {
     standardPlugins.put("in", new InCollectorFilterablePlugin());
     standardPlugins.put("range", new RangeCollectorFilterablePlugin());
     standardPlugins.put("bit", new BitCollectorFilterablePlugin());
+    standardPlugins.put("cbit", new BitContainCollectorFilterablePlugin());
   }
 
   /** return a {@link CollectorFilterable} */
