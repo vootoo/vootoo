@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.apache.solr.search.SyntaxError;
 import org.apache.solr.search.function.ValueSourceRangeFilter;
 import org.junit.Assert;
@@ -87,8 +88,6 @@ public class CollectorFilterablePluginTest {
     assertMv(mvalues, "#");
   }
 
-
-
   @Test
   public void testParseRange() {
     assertRange("[10 TO 20]", "10", "20", true, true, false);
@@ -96,5 +95,35 @@ public class CollectorFilterablePluginTest {
     assertRange("(10 TO 20)", "10", "20", false, false, false);
     assertRange(" [ 10 TO 20 ] ", "10", "20", true, true, false);
     assertRange("[10 TO20]", "10", "20", false, false, true);
+  }
+
+  @Test
+  public void test_parseLongExt() {
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("16"), new Long(16));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0123"), new Long(123));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0x00100"), new Long(256));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0X0"), new Long(0));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0xf"), new Long(15));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0b100"), new Long(4));
+    Assert.assertEquals(CollectorFilterablePlugin.parseLongExt("0B10"), new Long(2));
+
+    try {
+      CollectorFilterablePlugin.parseLongExt("0b2");
+      Assert.fail("parse 0b fail!");
+    } catch (Exception e) {
+      Assert.assertTrue(e instanceof NumberFormatException);
+    }
+    try {
+      CollectorFilterablePlugin.parseLongExt("0xg");
+      Assert.fail("parse 0x fail!");
+    } catch (Exception e) {
+      Assert.assertTrue(e instanceof NumberFormatException);
+    }
+    try {
+      CollectorFilterablePlugin.parseLongExt("0a123");
+      Assert.fail("parse num fail!");
+    } catch (Exception e) {
+      Assert.assertTrue(e instanceof NumberFormatException);
+    }
   }
 }

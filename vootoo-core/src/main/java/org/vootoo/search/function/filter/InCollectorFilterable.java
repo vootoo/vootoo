@@ -37,8 +37,6 @@ public class InCollectorFilterable extends ValueSourceCollectorFilterable {
 
 	private Set<Object> inObjValues;
 
-	private FunctionValues functionValues;
-
 	public InCollectorFilterable(ValueSource valueSource, String[] inValues) {
 	  super(valueSource);
 		this.inValues = inValues;
@@ -62,11 +60,6 @@ public class InCollectorFilterable extends ValueSourceCollectorFilterable {
 			}
 		}
 		return inObjValues.contains(obj);
-	}
-
-	@Override
-	public void setNextReader(@SuppressWarnings("rawtypes") Map context, AtomicReaderContext readerContext) throws IOException {
-		functionValues = valueSource.getValues(context, readerContext);
 	}
 
   @Override
