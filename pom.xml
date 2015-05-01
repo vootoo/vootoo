@@ -8,7 +8,7 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <name>vootoo ${version}</name>
   <packaging>pom</packaging>
 
@@ -34,6 +34,11 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
       </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -114,5 +119,6 @@
   </build>
   <modules>
   	<module>vootoo-core</module>
+    <module>vootoo-logging-logback</module>
   </modules>
 </project>
