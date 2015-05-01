@@ -38,7 +38,7 @@ import java.util.*;
  *   &lt;solr&gt;
  *     &lt;-- ... --&gt;
  *     &lt;logging&gt;
- *       &lt;str name="class"&gt;org.vootoo.logging.logback.LogbackLogWatcher&lt;/str&gt;
+ *       &lt;str name="class"&gt;org.vootoo.logging.logback.LogbackWatcher&lt;/str&gt;
  *       &lt;bool name="enabled"&gt;true&lt;/bool&gt;
  *       &lt;watcher&gt;
  *         &lt;int name="size"&gt;50&lt;/int&gt;
