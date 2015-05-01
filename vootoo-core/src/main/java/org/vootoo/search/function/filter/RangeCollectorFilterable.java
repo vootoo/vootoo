@@ -17,15 +17,15 @@
 
 package org.vootoo.search.function.filter;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.queries.function.ValueSourceScorer;
 import org.apache.solr.search.function.ValueSourceRangeFilter;
 import org.vootoo.search.CollectorFilterable;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * range collector filter
@@ -85,7 +85,7 @@ public class RangeCollectorFilterable extends CollectorFilterable {
   }
 
   @Override
-  public void setNextReader(@SuppressWarnings("rawtypes") Map context, AtomicReaderContext readerContext)
+  public void doSetNextReader(@SuppressWarnings("rawtypes") Map context, LeafReaderContext readerContext)
       throws IOException {
     FunctionValues values = getValueSource().getValues(context, readerContext);
     rangeScorer = values.getRangeScorer(readerContext.reader(),

@@ -3,18 +3,20 @@
   <parent>
     <artifactId>oss-parent</artifactId>
     <groupId>org.sonatype.oss</groupId>
-    <version>7</version>
+    <version>9</version>
   </parent>
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.1-SNAPSHOT</version>
   <name>vootoo ${version}</name>
   <packaging>pom</packaging>
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <solr.version>4.10.3</solr.version>
+    <solr.version>5.1.0</solr.version>
+    <slf4j.version>1.7.7</slf4j.version>
+    <logback.version>1.1.3</logback.version>
   </properties>
 
   <dependencies>
@@ -28,11 +30,27 @@
 
   <dependencyManagement>
   	<dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-test-framework</artifactId>
             <version>${solr.version}</version>
             <scope>test</scope>
+            <exclusions>
+              <exclusion>
+                <artifactId>log4j</artifactId>
+                <groupId>log4j</groupId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -43,6 +61,12 @@
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
             <version>${solr.version}</version>
+            <exclusions>
+              <exclusion>
+                <artifactId>log4j</artifactId>
+                <groupId>log4j</groupId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.vootoo</groupId>
@@ -95,5 +119,6 @@
   </build>
   <modules>
   	<module>vootoo-core</module>
+    <module>vootoo-logging-logback</module>
   </modules>
 </project>

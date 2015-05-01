@@ -17,11 +17,11 @@
 
 package org.vootoo.search;
 
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.solr.search.DelegatingCollector;
+
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.lucene.index.AtomicReaderContext;
-import org.apache.solr.search.DelegatingCollector;
 
 public class FilterCollector extends DelegatingCollector {
 
@@ -38,15 +38,15 @@ public class FilterCollector extends DelegatingCollector {
 	@Override
 	public void collect(int doc) throws IOException {
 		if(doc < maxdoc && filter.matches(doc)) {
-			delegate.collect(doc);
+			leafDelegate.collect(doc);
 		}
 	}
 
 	@Override
-	public void setNextReader(AtomicReaderContext context) throws IOException {
+	public void doSetNextReader(LeafReaderContext context) throws IOException {
 		maxdoc = context.reader().maxDoc();
-		filter.setNextReader(fcontext, context);
-		super.setNextReader(context);
+		filter.doSetNextReader(fcontext, context);
+		super.doSetNextReader(context);
 	}
 
 }
