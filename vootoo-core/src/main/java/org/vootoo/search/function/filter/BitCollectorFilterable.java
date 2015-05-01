@@ -17,12 +17,8 @@
 
 package org.vootoo.search.function.filter;
 
-import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.queries.function.ValueSource;
 import org.vootoo.search.ValueSourceCollectorFilterable;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * match is indexValue & queryValue != 0

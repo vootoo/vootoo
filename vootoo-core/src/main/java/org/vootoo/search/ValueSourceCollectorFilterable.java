@@ -17,7 +17,7 @@
 
 package org.vootoo.search;
 
-import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 
@@ -39,7 +39,7 @@ public abstract class ValueSourceCollectorFilterable extends CollectorFilterable
   }
 
   @Override
-  public void setNextReader(@SuppressWarnings("rawtypes") Map context, AtomicReaderContext readerContext) throws IOException {
+  public void doSetNextReader(@SuppressWarnings("rawtypes") Map context, LeafReaderContext readerContext) throws IOException {
     functionValues = valueSource.getValues(context, readerContext);
   }
 
