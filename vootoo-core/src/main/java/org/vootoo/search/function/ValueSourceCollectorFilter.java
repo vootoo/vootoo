@@ -17,10 +17,7 @@
 
 package org.vootoo.search.function;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.queries.function.ValueSourceScorer;
 import org.apache.lucene.search.BitsFilteredDocIdSet;
@@ -31,6 +28,9 @@ import org.apache.lucene.util.Bits;
 import org.apache.solr.search.SolrFilter;
 import org.vootoo.search.CollectorFilterable;
 import org.vootoo.search.ValueSourceCollectorFilterable;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * CollectorFilter over a ValueSource
@@ -55,9 +55,14 @@ public class ValueSourceCollectorFilter extends SolrFilter {
 	}
 
 	@Override
-	public DocIdSet getDocIdSet(@SuppressWarnings("rawtypes") final Map context, final AtomicReaderContext readerContext, Bits acceptDocs) throws IOException {
-		collectorFilterable.setNextReader(context, readerContext);
+	public DocIdSet getDocIdSet(@SuppressWarnings("rawtypes") final Map context, final LeafReaderContext readerContext, Bits acceptDocs) throws IOException {
+		collectorFilterable.doSetNextReader(context, readerContext);
 		return BitsFilteredDocIdSet.wrap(new DocIdSet() {
+			@Override
+			public long ramBytesUsed() {
+				return 0;
+			}
+
 			@Override
 			public DocIdSetIterator iterator() throws IOException {
 				return new ValueSourceScorer(readerContext.reader(), valueSource.getValues(context, readerContext)) {
@@ -77,7 +82,7 @@ public class ValueSourceCollectorFilter extends SolrFilter {
 		}, acceptDocs);
 	}
 
-	public String toString() {
+	public String toString(String field) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("vsfilter(");
 		sb.append(valueSource).append(",");

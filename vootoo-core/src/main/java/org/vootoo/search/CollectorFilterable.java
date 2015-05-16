@@ -17,15 +17,15 @@
 
 package org.vootoo.search;
 
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.solr.schema.TrieDateField;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.lucene.index.AtomicReaderContext;
-import org.apache.solr.schema.TrieDateField;
 
 /**
  * use {@link FilterCollector} call {@link #matches(int)} determine docId if hit or not.
@@ -40,7 +40,7 @@ public abstract class CollectorFilterable {
 
 	public abstract boolean matches(int doc);
 
-	public abstract void setNextReader(@SuppressWarnings("rawtypes") Map context, AtomicReaderContext readerContext) throws IOException;
+	public abstract void doSetNextReader(@SuppressWarnings("rawtypes") Map context, LeafReaderContext readerContext) throws IOException;
 
 	public static interface Parser {
 		Object parse(String value);

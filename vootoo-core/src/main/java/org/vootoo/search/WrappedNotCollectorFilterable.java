@@ -17,10 +17,10 @@
 
 package org.vootoo.search;
 
+import org.apache.lucene.index.LeafReaderContext;
+
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.lucene.index.AtomicReaderContext;
 
 /**
  * wrapped <code>NOT</code> {@link CollectorFilterable}
@@ -59,9 +59,9 @@ public class WrappedNotCollectorFilterable extends CollectorFilterable {
 
   @SuppressWarnings("rawtypes")
   @Override
-  public void setNextReader(Map context, AtomicReaderContext readerContext)
+  public void doSetNextReader(Map context, LeafReaderContext readerContext)
       throws IOException {
-    collectorFilterable.setNextReader(context, readerContext);
+    collectorFilterable.doSetNextReader(context, readerContext);
   }
 
 }

@@ -17,16 +17,12 @@
 
 package org.vootoo.search.function.filter;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.lucene.index.AtomicReaderContext;
-import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 import org.vootoo.search.ValueSourceCollectorFilterable;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * link sql <code>in=(x, y, z)</code>
