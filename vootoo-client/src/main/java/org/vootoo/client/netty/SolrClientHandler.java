@@ -34,9 +34,10 @@ public class SolrClientHandler extends SimpleChannelInboundHandler<SolrProtocol.
   protected void channelRead0(ChannelHandlerContext ctx, SolrProtocol.SolrResponse solrResponse) throws Exception {
     ResponseCallback callback = NettyClient.remove(solrResponse.getRid());
     if (callback != null) {
-      callback.response(solrResponse);
+      logger.debug("receive response={}", solrResponse);
+      callback.applyResult(solrResponse);
     } else {
-      logger.warn("miss rid='{}' response callback", solrResponse.getRid());
+      logger.warn("miss rid='{}' at {} applyResult callback", solrResponse.getRid(), ctx.channel());
     }
   }
 

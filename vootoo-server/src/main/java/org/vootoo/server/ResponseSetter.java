@@ -15,53 +15,34 @@
  * limitations under the License.
  */
 
-package org.vootoo.client;
+package org.vootoo.server;
+
+import org.apache.solr.core.SolrCore;
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.response.SolrQueryResponse;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * 1=json, 2=javabin, 3=xml
- * 4=csv, 5=python, 6=php, 7=phps, 8=avro
+ * @author chenlb on 2015-05-25 16:54.
  */
-public enum ResponseFormat {
-  /** json */
-  JSON(1),
+public interface ResponseSetter<T> {
 
-  /** javabin*/
-  JAVA_BIN(2),
+  void setContentType(String contentType);
 
-  /** xml */
-  XML(3),
+  void setStatus(int status);
 
-  /** csv */
-  CSV(4),
+  OutputStream getOutputStream();
 
-  /** python */
-  PYTHON(5),
+  void sendError(int code, Throwable ex);
 
-  /** php */
-  PHP(6),
+  /**
+   * after writeQueryResponse call this method
+   */
+  void writeQueryResponseComplete(SolrQueryResponse solrQueryResponse);
 
-  /** phps */
-  PHPS(7),
+  SolrQueryResponse getSolrQueryResponse();
 
-  /** avro */
-  AVRO(8)
-  ;
-  private final int format;
-
-  ResponseFormat (int format) {
-    this.format = format;
-  }
-
-  public int getFormat() {
-    return format;
-  }
-
-  public static ResponseFormat valueOf(int format) {
-    for(ResponseFormat responseFormat : ResponseFormat.values()) {
-      if(responseFormat.getFormat() == format) {
-        return responseFormat;
-      }
-    }
-    throw new IllegalArgumentException("not found format value='"+format+"' ResponseFormat");
-  }
+  T buildProtocolResponse();
 }

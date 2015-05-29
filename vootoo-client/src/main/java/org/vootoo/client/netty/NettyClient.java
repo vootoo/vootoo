@@ -20,12 +20,14 @@ package org.vootoo.client.netty;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
@@ -51,11 +53,16 @@ public class NettyClient {
   private Bootstrap bootstrap;
 
   public NettyClient() {
-    loopGroup = new NioEventLoopGroup();
+    loopGroup = new NioEventLoopGroup(10);
     bootstrap = new Bootstrap();
     bootstrap.group(loopGroup);
     bootstrap.channel(NioSocketChannel.class);
+    bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
     bootstrap.handler(new SolrClientChannelInitializer());
+  }
+
+  public NettyClient(Bootstrap bootstrap) {
+    this.bootstrap = bootstrap;
   }
 
   public void shutdown() {
@@ -91,52 +98,37 @@ public class NettyClient {
    * @return ChannelRefCounted 已经 incref 一次，完了后，还要 decref。
    * @throws IOException
    */
-  public static ChannelRefCounted connect(Bootstrap bootstrap, final InetSocketAddress serverAddress, long connectTimeout) throws IOException {
-    //complete listener
-    final CountDownLatch conned = new CountDownLatch(1);
-    ChannelFutureListener connectedListener = new ChannelFutureListener() {
+  public static ChannelRefCounted connect(Bootstrap bootstrap, final SocketAddress serverAddress, long connectTimeout) throws IOException {
 
-      @Override
-      public void operationComplete(ChannelFuture future) throws Exception {
-        conned.countDown();
-        if(logger != null) {
-          logger.info("connect remote server={} connectedListener Complete", serverAddress);
-        }
-      }
-    };
+    ChannelFuture future = null;
+    try {
+      future = bootstrap.connect(serverAddress).sync();
+    } catch (InterruptedException e) {
+      throw new NettyConnectLessException("connect fail by InterruptedException, tcp=" + serverAddress);
+    }
 
-    ChannelFuture future = bootstrap.connect(serverAddress.getHostName(), serverAddress.getPort());
-    future.addListener(connectedListener);
+    // use bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
+    // so await without timeout
+    future.awaitUninterruptibly();
 
-    if(future.isDone() && future.isSuccess()) {
-      //连接成功不用等待。
-      future.removeListener(connectedListener);
+    assert future.isDone();
+
+    if(future.isCancelled()) {
+      // Connection attempt cancelled by user
+      throw new NettyConnectLessException("Connection attempt cancelled by user tcp=" + serverAddress);
+    } else if(!future.isSuccess()) {
+      throw new NettyConnectLessException(future.cause().getMessage()+", tcp="+serverAddress, future.cause());
     } else {
-      boolean isTimeout = false;
-      //挂住，等待 future 完成
-      try {
-        if(connectTimeout < 1) {
-          connectTimeout = 1000;
-        }
-        isTimeout = conned.await(connectTimeout, TimeUnit.MILLISECONDS);
-      } catch(InterruptedException e) {
+      // Connection established successfully
+      if(logger != null) {
+        logger.info("connect remote server={} success", serverAddress);
       }
 
-      if(!future.isDone() || !future.isSuccess()) {
-        future.removeListener(connectedListener);
-        future.cancel(true);
-        throw new NettyConnectLessException("connect fail by timeout, tcp=" + serverAddress + ", connectTimeout=" + connectTimeout + ", isTimeout=" + isTimeout);
-      }
+      //加到 ref
+      ChannelRefCounted channelRef = new ChannelRefCounted(future.channel());
+      channelRef.incref();
+      return channelRef;
     }
 
-    if(logger != null) {
-      logger.info("connect remote server={} success", serverAddress);
-    }
-
-    //加到 ref
-    ChannelRefCounted channelRef = new ChannelRefCounted(future.channel());
-    channelRef.incref();
-
-    return channelRef;
   }
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Iterator;
 
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -65,13 +66,32 @@ public class NettyUtil {
   }
 
   public static ByteString formSolrParams(SolrParams solrParams) {
-    ModifiableSolrParams mParams = null;
-    if (solrParams instanceof ModifiableSolrParams) {
-      mParams = (ModifiableSolrParams) solrParams;
-    } else {
-      mParams = new ModifiableSolrParams(solrParams);
+    return ByteString.copyFromUtf8(solrParamsToString(solrParams, "&"));
+  }
+
+  public static String solrParamsToString(SolrParams solrParams, String joinStr) {
+    StringBuilder sb = new StringBuilder(128);
+    Iterator<String> it = solrParams.getParameterNamesIterator();
+    while(it.hasNext()) {
+      String name = it.next();
+      String[] values = solrParams.getParams(name);
+      if(values == null) {
+        //only key
+        sb.append(name);
+        sb.append(joinStr);
+      } else {
+        for(String v : values) {
+          sb.append(name);
+          sb.append('=');
+          sb.append(v);
+          sb.append(joinStr);
+        }
+      }
     }
-    return ByteString.copyFromUtf8(mParams.toString());
+    if(sb.length() > joinStr.length()) {
+      sb.setLength(sb.length() - joinStr.length());
+    }
+    return sb.toString();
   }
 
   public static ByteString readFrom(ContentStream stream) throws IOException {

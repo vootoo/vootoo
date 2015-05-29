@@ -15,37 +15,28 @@
  * limitations under the License.
  */
 
-package org.vootoo.client.netty;
+package org.vootoo.common;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.vootoo.client.netty.protocol.SolrProtocol;
+import java.io.ByteArrayOutputStream;
 
 /**
+ * @author chenlb on 2015-05-26 16:17.
  */
-public class AwaitResponseCallback implements ResponseCallback {
+public class MemoryOutputStream extends ByteArrayOutputStream {
 
-  private final CountDownLatch finishLatch = new CountDownLatch(1);
-  private SolrProtocol.SolrResponse solrResponse;
-
-  @Override
-  public void response(SolrProtocol.SolrResponse solrResponse) {
-    this.solrResponse = solrResponse;
-    finishLatch.countDown();
+  public MemoryOutputStream() {
+    this(8192);
   }
 
-  public SolrProtocol.SolrResponse awaitResponse(long timeout) {
-    try {
-      if(timeout > 0) {
-        finishLatch.await(timeout, TimeUnit.MILLISECONDS);
-      } else {
-        finishLatch.await();
-      }
-    } catch (InterruptedException e) {
+  public MemoryOutputStream(int size) {
+    super(size);
+  }
 
-    }
+  public byte[] getBuffer() {
+    return buf;
+  }
 
-    return solrResponse;
+  public int getCount() {
+    return count;
   }
 }

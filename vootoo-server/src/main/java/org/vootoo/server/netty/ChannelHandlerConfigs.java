@@ -15,53 +15,21 @@
  * limitations under the License.
  */
 
-package org.vootoo.client;
+package org.vootoo.server.netty;
 
 /**
- * 1=json, 2=javabin, 3=xml
- * 4=csv, 5=python, 6=php, 7=phps, 8=avro
+ * @author chenlb on 2015-05-22 11:09.
  */
-public enum ResponseFormat {
-  /** json */
-  JSON(1),
+public class ChannelHandlerConfigs {
+  private static final int MB = 1024 * 1024;
 
-  /** javabin*/
-  JAVA_BIN(2),
+  private int maxFrameLength = 50 * MB;
 
-  /** xml */
-  XML(3),
-
-  /** csv */
-  CSV(4),
-
-  /** python */
-  PYTHON(5),
-
-  /** php */
-  PHP(6),
-
-  /** phps */
-  PHPS(7),
-
-  /** avro */
-  AVRO(8)
-  ;
-  private final int format;
-
-  ResponseFormat (int format) {
-    this.format = format;
+  public int getMaxFrameLength() {
+    return maxFrameLength;
   }
 
-  public int getFormat() {
-    return format;
-  }
-
-  public static ResponseFormat valueOf(int format) {
-    for(ResponseFormat responseFormat : ResponseFormat.values()) {
-      if(responseFormat.getFormat() == format) {
-        return responseFormat;
-      }
-    }
-    throw new IllegalArgumentException("not found format value='"+format+"' ResponseFormat");
+  public void setMaxFrameLength(int maxFrameLength) {
+    this.maxFrameLength = maxFrameLength;
   }
 }

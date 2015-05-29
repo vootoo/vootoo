@@ -21,6 +21,7 @@ import io.netty.bootstrap.Bootstrap;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,13 +43,17 @@ public class SimpleChannelPool implements ChannelPool {
   protected InetSocketAddress serverAddress;
   protected long connectTimeout;
 
-  public SimpleChannelPool(Bootstrap bootstrap, int poolSize, InetSocketAddress serverAddress, long connectTimeout) {
+  protected SimpleChannelPool(Bootstrap bootstrap, int poolSize, long connectTimeout) {
     this.bootstrap = bootstrap;
     this.poolSize = poolSize;
-    pool = new ArrayList<ChannelRefCounted>(poolSize);
+    pool = new ArrayList<>(poolSize);
+    this.connectTimeout = connectTimeout;
+  }
+
+  public SimpleChannelPool(Bootstrap bootstrap, int poolSize, InetSocketAddress serverAddress, long connectTimeout) {
+    this(bootstrap, poolSize, connectTimeout);
 
     this.serverAddress = serverAddress;
-    this.connectTimeout = connectTimeout;
   }
 
   @Override
@@ -61,14 +66,18 @@ public class SimpleChannelPool implements ChannelPool {
     return serverAddress.getPort();
   }
 
-  protected ChannelRefCounted connectChannel(InetSocketAddress serverAddress, long connectTimeout) throws IOException {
+  protected ChannelRefCounted connectChannel(SocketAddress serverAddress, long connectTimeout) throws IOException {
     return NettyClient.connect(bootstrap, serverAddress, connectTimeout);
+  }
+
+  protected SocketAddress getSocketAddress() {
+    return serverAddress;
   }
 
   @Override
   public ChannelRefCounted getChannel(int maxTry) throws IOException {
     if(pool.size() < poolSize) {
-      ChannelRefCounted newChannel = connectChannel(serverAddress, connectTimeout);
+      ChannelRefCounted newChannel = connectChannel(getSocketAddress(), connectTimeout);
       pool.add(newChannel);
       return newChannel;
     }
@@ -77,7 +86,7 @@ public class SimpleChannelPool implements ChannelPool {
     if(!channel.isAvailable()) {
       synchronized (channel) {
         if(!channel.isAvailable()) {
-          ChannelRefCounted newChannel = connectChannel(serverAddress, connectTimeout);
+          ChannelRefCounted newChannel = connectChannel(getSocketAddress(), connectTimeout);
           pool.set(idx, newChannel);
           //逐出后要 dec ref
           channel.decref();

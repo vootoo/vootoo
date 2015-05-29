@@ -29,4 +29,9 @@ public class NettyConnectLessException extends ConnectException {
   public NettyConnectLessException(String message) {
     super(message);
   }
+
+  public NettyConnectLessException(String message, Throwable cause) {
+    this(message);
+    initCause(cause);
+  }
 }

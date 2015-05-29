@@ -17,31 +17,33 @@
 
 package org.vootoo.client.netty;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-
 import org.vootoo.client.netty.protocol.SolrProtocol;
 
 /**
  */
-public class SolrClientChannelInitializer extends ChannelInitializer<SocketChannel> {
+public class SolrClientChannelInitializer extends ChannelInitializer<Channel> {
+
+  static int MB = 1024 * 1024;
 
   @Override
-  protected void initChannel(SocketChannel ch) throws Exception {
+  protected void initChannel(Channel ch) throws Exception {
     ChannelPipeline pipeline = ch.pipeline();
 
-    pipeline.addLast("frame-decoder", new ProtobufVarint32FrameDecoder());
-    pipeline.addLast("frame-encoder", new ProtobufVarint32LengthFieldPrepender());
+    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(200 * MB, 0, 4, 0, 4));
+    pipeline.addLast("frame-encoder", new LengthFieldPrepender(4));
 
     pipeline.addLast("pb-decoder", new ProtobufDecoder(SolrProtocol.SolrResponse.getDefaultInstance()));
     pipeline.addLast("pb-encoder", new ProtobufEncoder());
-
-    pipeline.addLast("solr-encoder", new SolrRequestEncoder());
 
     pipeline.addLast(new SolrClientHandler());
   }

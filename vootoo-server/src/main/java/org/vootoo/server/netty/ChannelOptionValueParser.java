@@ -15,12 +15,30 @@
  * limitations under the License.
  */
 
-package org.vootoo.server;
+package org.vootoo.server.netty;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
- * @author chenlb on 2014-06-23 22:52.
+ * channel option string parser to ChannelOption Value
+ * @author chenlb on 2015-05-22 10:48.
  */
-public interface ErrorCodeSetter {
+public interface ChannelOptionValueParser<V> {
 
-  void setError(int errorCode, String errorStr);
+  /**
+   * @return value is blank or null return null
+   * @throws Exception parse fail
+   */
+  V parse(String value) throws Exception;
+
+  public static class LongOptionValueParser implements ChannelOptionValueParser<Long> {
+    @Override
+    public Long parse(String value) throws Exception {
+      if(StringUtils.isBlank(value)) {
+        return null;
+      } else {
+        return Long.parseLong(value);
+      }
+    }
+  }
 }

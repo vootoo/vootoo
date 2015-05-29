@@ -19,79 +19,83 @@ package org.vootoo.server.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import org.apache.solr.core.CoreContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.client.FastByteOutputStream;
-import org.vootoo.client.netty.SolrRequest;
 import org.vootoo.client.netty.protocol.SolrProtocol;
-import org.vootoo.server.ErrorCodeSetter;
-import org.vootoo.server.SolrDispatcher;
-
-import com.google.protobuf.ByteString;
+import org.vootoo.server.RequestExecutor;
+import org.vootoo.server.Vootoo;
+import org.vootoo.server.RequestProcesser;
 
 /**
  */
-public class SolrServerHandler extends SimpleChannelInboundHandler<SolrRequest> {
+public class SolrServerHandler extends SimpleChannelInboundHandler<SolrProtocol.SolrRequest> {
 
   private static final Logger logger = LoggerFactory.getLogger(SolrServerHandler.class);
 
   private final CoreContainer coreContainer;
+  private final RequestExecutor queryExecutor;
+  private final RequestExecutor updateExecutor;
 
-  public SolrServerHandler (CoreContainer coreContainer) {
+  public SolrServerHandler(CoreContainer coreContainer, RequestExecutor queryExecutor, RequestExecutor updateExecutor) {
     this.coreContainer = coreContainer;
+    this.queryExecutor = queryExecutor;
+    this.updateExecutor = updateExecutor;
   }
 
-  private static class SolrProtocolErrorCodeSetter implements ErrorCodeSetter {
+  private class SolrRequestRunner implements Runnable {
+    private ChannelHandlerContext ctx;
+    private ProtobufRequestGetter solrRequest;
 
-    final SolrProtocol.SolrResponse.Builder solrResponseBuilder;
-
-    private SolrProtocolErrorCodeSetter(
-        SolrProtocol.SolrResponse.Builder solrResponseBuilder) {
-      this.solrResponseBuilder = solrResponseBuilder;
+    public SolrRequestRunner(ChannelHandlerContext ctx, ProtobufRequestGetter solrRequest) {
+      this.ctx = ctx;
+      this.solrRequest = solrRequest;
     }
 
     @Override
-    public void setError(int errorCode, String errorStr) {
-      solrResponseBuilder.setErrorCode(errorCode);
-      solrResponseBuilder.setErrorStr(errorStr);
+    public void run() {
+      ProtobufResponseSetter responeSetter = new ProtobufResponseSetter(solrRequest.getRid());
+      try {
+        handleRequest(responeSetter, solrRequest);
+
+        //parse applyResult
+      } catch (Throwable t) {
+        responeSetter.sendError(500, t);
+      } finally {
+        // write solr applyResult to channel
+        ctx.writeAndFlush(responeSetter.buildProtocolResponse());
+      }
+    }
+
+    protected void handleRequest(ProtobufResponseSetter responeSetter, ProtobufRequestGetter solrRequest) {
+      RequestProcesser requestHandler = new RequestProcesser(coreContainer, responeSetter);
+      requestHandler.handleRequest(solrRequest);
     }
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, SolrRequest solrRequest) throws Exception {
-    SolrDispatcher dispatcher = new SolrDispatcher(solrRequest, coreContainer);
+  protected void channelRead0(ChannelHandlerContext ctx, SolrProtocol.SolrRequest solrRequest) throws Exception {
+    SolrRequestRunner solrTask = new SolrRequestRunner(ctx, new ProtobufRequestGetter(solrRequest));
 
-    dispatcher.run();
-
-    SolrProtocol.SolrResponse.Builder solrResponseBuilder = SolrProtocol.SolrResponse.newBuilder();
-    solrResponseBuilder.setRid(solrRequest.getRid());
-
-    FastByteOutputStream outputStream = new FastByteOutputStream();
-
-    if(dispatcher.getThrowable() != null) {
-      dispatcher.sendError(outputStream, new SolrProtocolErrorCodeSetter(solrResponseBuilder), dispatcher.getThrowable());
-    } else {
-      dispatcher.writeResponse(outputStream);
-      solrResponseBuilder.setResponseFormat(dispatcher.getResponseFormat());
-      solrResponseBuilder.setResponse(ByteString.copyFrom(outputStream.buffer(), 0, outputStream.bufferSize()));
+    // solr execute request in thread pool
+    if(Vootoo.isUpdateRequest(solrRequest.getPath())) {
+      updateExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
+    } else {// query request
+      queryExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
     }
 
-    // write solr response to channel
-    ctx.writeAndFlush(solrResponseBuilder);
+    //TODO RejectedExecutionException
   }
 
   @Override
   public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-    logger.info("channelReadComplete, channel={}", ctx.channel());
+    logger.debug("channelReadComplete, channel={}", ctx.channel());
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    logger.warn("Unexpected exception from downstream.", cause);
+    logger.warn("Netty Channel Handler Exception channel=" + ctx.channel(), cause);
     ctx.close();
   }
-
 
 }

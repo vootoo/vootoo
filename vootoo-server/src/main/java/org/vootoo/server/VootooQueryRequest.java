@@ -15,27 +15,20 @@
  * limitations under the License.
  */
 
-package org.vootoo.client;
+package org.vootoo.server;
 
-import java.io.ByteArrayOutputStream;
+import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.core.SolrCore;
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.request.SolrQueryRequestBase;
+import org.apache.solr.util.RTimer;
 
 /**
- * can get buffer[]
+ * @author chenlb on 2015-05-25 11:34.
  */
-public class FastByteOutputStream extends ByteArrayOutputStream {
+public class VootooQueryRequest extends SolrQueryRequestBase {
 
-  public FastByteOutputStream() {
-  }
-
-  public FastByteOutputStream(int size) {
-    super(size);
-  }
-
-  public byte[] buffer() {
-    return buf;
-  }
-
-  public int bufferSize() {
-    return count;
+  public VootooQueryRequest(SolrCore core, SolrParams params, RTimer requestTimer) {
+    super(core, params, requestTimer);
   }
 }

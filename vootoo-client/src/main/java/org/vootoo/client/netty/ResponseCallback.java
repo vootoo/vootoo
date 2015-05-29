@@ -17,11 +17,38 @@
 
 package org.vootoo.client.netty;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.protocol.SolrProtocol;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  */
-public interface ResponseCallback {
+public class ResponseCallback {
 
-  void response(SolrProtocol.SolrResponse solrResponse);
+  private static final Logger logger = LoggerFactory.getLogger(ResponseCallback.class);
+
+  private final CountDownLatch finishLatch = new CountDownLatch(1);
+  private volatile SolrProtocol.SolrResponse solrResponse;
+
+  public void applyResult(SolrProtocol.SolrResponse solrResponse) {
+    this.solrResponse = solrResponse;
+    logger.debug("receive response={}", solrResponse);
+    finishLatch.countDown();
+  }
+
+  public SolrProtocol.SolrResponse awaitResult(long timeout) {
+    try {
+      if(timeout > 0) {
+        finishLatch.await(timeout, TimeUnit.MILLISECONDS);
+      } else {
+        finishLatch.await();
+      }
+    } catch (InterruptedException e) {
+
+    }
+    return solrResponse;
+  }
 }
