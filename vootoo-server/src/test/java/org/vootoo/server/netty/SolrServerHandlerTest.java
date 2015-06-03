@@ -31,7 +31,10 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -47,6 +50,7 @@ import org.vootoo.server.RequestProcesserTest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -87,7 +91,7 @@ public class SolrServerHandlerTest extends RequestProcesserTest {
         .childHandler(new SolrServerChannelInitializer(h.getCoreContainer(), new ChannelHandlerConfigs(),
             queryExecutor,
             updateExecutor
-            ));
+        ));
 
     client = new Bootstrap();
     client.group(clientGroup)
@@ -131,28 +135,53 @@ public class SolrServerHandlerTest extends RequestProcesserTest {
     }
   }
 
-  @Test
-  public void test_query() throws InterruptedException, IOException, SolrServerException {
-    // Start the client.
-    //Channel ch = client.connect(addr).sync().channel();
+  NettySolrClient solrClient;
 
-    String id = addTestDoc();
+  @Before
+  public void before_test() {
+    solrClient = createNettysolrClient();
+  }
 
+  protected NettySolrClient createNettysolrClient() {
     NettyClient nettyClient = new NettyClient(client);
     LocalSimpleChannelPool channelPool = new LocalSimpleChannelPool(client, 1, addr, 3000);
 
     NettySolrClient solrClient = new NettySolrClient("localhost", 8001, nettyClient, channelPool);
-    //solrClient.setParser(new XMLResponseParser());
+    return solrClient;
+  }
 
+  protected SolrQuery createIdQuery(String id) {
     SolrQuery query = new SolrQuery("id:\""+id+"\"");
     query.set("_timeout_", 1000);
     query.set("indent", "on");
+    return query;
+  }
 
-    QueryResponse queryResponse = solrClient.query("collection1", query);
+  @Test
+  public void test_query() throws InterruptedException, IOException, SolrServerException {
+    String id = addTestDoc();
 
-    System.out.println(queryResponse);
+    QueryResponse queryResponse = solrClient.query("collection1", createIdQuery(id));
+
+    //System.out.println(queryResponse);
 
     assertIdResult(queryResponse, id);
+  }
+
+  @Test
+  public void test_update_add() throws IOException, SolrServerException {
+    String id = createDocId();
+
+    SolrInputDocument sid = new SolrInputDocument();
+    sid.addField("id", id);
+
+    UpdateResponse addResp = solrClient.add("collection1", sid);
+
+    System.out.println(addResp);
+
+    assertU(commit());
+
+    assertQueryId(id);
   }
 
 }

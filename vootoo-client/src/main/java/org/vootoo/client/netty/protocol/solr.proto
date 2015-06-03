@@ -28,14 +28,25 @@ message SolrRequest {
 }
 
 message ResponseBody {
-	optional int32 status = 1 [default = 0];
-	required string contentType = 2;
-	required bytes body = 3;
+	required string contentType = 1;
+	required bytes body = 2;
+}
+
+message KeyValue {
+	required string key = 1;
+	required string value = 2;
+}
+
+message ExceptionBody {
+	required int32 code = 1;
+	repeated string message = 2;
+	repeated KeyValue metadata = 3;
+	optional string trace = 4;
 }
 
 message SolrResponse {
 	required int64 rid = 1;
-	optional ResponseBody responseBody = 3;
-	optional int32 errorCode = 4;
-	optional string errorMsg = 5;
+	optional ResponseBody responseBody = 2;
+	//maybe multi Exception
+	repeated ExceptionBody exceptionBody = 3;
 }

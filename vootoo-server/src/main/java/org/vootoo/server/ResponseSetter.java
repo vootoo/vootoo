@@ -17,6 +17,7 @@
 
 package org.vootoo.server;
 
+import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
@@ -31,11 +32,15 @@ public interface ResponseSetter<T> {
 
   void setContentType(String contentType);
 
-  void setStatus(int status);
+  OutputStream getResponseOutputStream();
 
-  OutputStream getOutputStream();
+  void setSolrResponseException(int code, NamedList info);
 
-  void sendError(int code, Throwable ex);
+  void addError(int code, String message);
+
+  void addError(int code, Throwable ex);
+
+  void addError(Throwable ex);
 
   /**
    * after writeQueryResponse call this method

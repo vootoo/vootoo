@@ -19,16 +19,23 @@ package org.vootoo.server.netty;
 
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.util.FastOutputStream;
+import org.apache.solr.common.util.NamedList;
 import org.apache.solr.response.SolrQueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ByteStringer;
+import org.vootoo.client.netty.util.ProtobufUtil;
 import org.vootoo.common.MemoryOutputStream;
 import org.vootoo.server.ResponseSetter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chenlb on 2015-05-25 17:28.
@@ -60,13 +67,7 @@ public class ProtobufResponseSetter implements ResponseSetter<SolrProtocol.SolrR
   }
 
   @Override
-  public void setStatus(int status) {
-    checkResponseBodyBuilder();
-    responseBodyBuilder.setStatus(status);
-  }
-
-  @Override
-  public OutputStream getOutputStream() {
+  public OutputStream getResponseOutputStream() {
     if(responeOutput == null) {
       responeOutput = new MemoryOutputStream();
     }
@@ -74,9 +75,52 @@ public class ProtobufResponseSetter implements ResponseSetter<SolrProtocol.SolrR
   }
 
   @Override
-  public void sendError(int code, Throwable ex) {
-    protocolResponseBuilder.setErrorCode(code);
-    protocolResponseBuilder.setErrorMsg(SolrException.toStr(ex));
+  public void setSolrResponseException(int code, NamedList info) {
+    SolrProtocol.ExceptionBody.Builder exceptionBody = SolrProtocol.ExceptionBody.newBuilder();
+
+    exceptionBody.setCode(code);
+
+    ProtobufUtil.fillErrorMetadata(exceptionBody, (NamedList<String>) info.get("metadata"));
+
+    List<String> msgs = info.getAll("msg");
+    if(msgs != null) {
+      exceptionBody.addAllMessage(msgs);
+    }
+
+    String trace = (String)info.get("trace");
+    if(trace != null) {
+      exceptionBody.setTrace(trace);
+    }
+
+    protocolResponseBuilder.addExceptionBody(exceptionBody);
+  }
+
+  @Override
+  public void addError(int code, String message) {
+    SolrProtocol.ExceptionBody.Builder exceptionBody = SolrProtocol.ExceptionBody.newBuilder();
+    exceptionBody.setCode(code);
+    exceptionBody.addMessage(message);
+
+    protocolResponseBuilder.addExceptionBody(exceptionBody);
+  }
+
+  @Override
+  public void addError(Throwable ex) {
+    addError(500, ex);
+  }
+
+  @Override
+  public void addError(int code, Throwable ex) {
+    SolrProtocol.ExceptionBody.Builder exceptionBody = SolrProtocol.ExceptionBody.newBuilder();
+    int errorCode = ProtobufUtil.getErrorInfo(ex, exceptionBody);
+
+    if(errorCode == 500 && code != 500 && code >= 100) {
+      // extend code
+      exceptionBody.setCode(code);
+    }
+
+    protocolResponseBuilder.addExceptionBody(exceptionBody);
+    //TODO check need
     logger.error(ex.getMessage(), ex);
   }
 

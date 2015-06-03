@@ -3403,38 +3403,28 @@ public final class SolrProtocol {
   public interface ResponseBodyOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // optional int32 status = 1 [default = 0];
+    // required string contentType = 1;
     /**
-     * <code>optional int32 status = 1 [default = 0];</code>
-     */
-    boolean hasStatus();
-    /**
-     * <code>optional int32 status = 1 [default = 0];</code>
-     */
-    int getStatus();
-
-    // required string contentType = 2;
-    /**
-     * <code>required string contentType = 2;</code>
+     * <code>required string contentType = 1;</code>
      */
     boolean hasContentType();
     /**
-     * <code>required string contentType = 2;</code>
+     * <code>required string contentType = 1;</code>
      */
     java.lang.String getContentType();
     /**
-     * <code>required string contentType = 2;</code>
+     * <code>required string contentType = 1;</code>
      */
     com.google.protobuf.ByteString
         getContentTypeBytes();
 
-    // required bytes body = 3;
+    // required bytes body = 2;
     /**
-     * <code>required bytes body = 3;</code>
+     * <code>required bytes body = 2;</code>
      */
     boolean hasBody();
     /**
-     * <code>required bytes body = 3;</code>
+     * <code>required bytes body = 2;</code>
      */
     com.google.protobuf.ByteString getBody();
   }
@@ -3489,18 +3479,13 @@ public final class SolrProtocol {
               }
               break;
             }
-            case 8: {
+            case 10: {
               bitField0_ |= 0x00000001;
-              status_ = input.readInt32();
+              contentType_ = input.readBytes();
               break;
             }
             case 18: {
               bitField0_ |= 0x00000002;
-              contentType_ = input.readBytes();
-              break;
-            }
-            case 26: {
-              bitField0_ |= 0x00000004;
               body_ = input.readBytes();
               break;
             }
@@ -3544,33 +3529,17 @@ public final class SolrProtocol {
     }
 
     private int bitField0_;
-    // optional int32 status = 1 [default = 0];
-    public static final int STATUS_FIELD_NUMBER = 1;
-    private int status_;
+    // required string contentType = 1;
+    public static final int CONTENTTYPE_FIELD_NUMBER = 1;
+    private java.lang.Object contentType_;
     /**
-     * <code>optional int32 status = 1 [default = 0];</code>
+     * <code>required string contentType = 1;</code>
      */
-    public boolean hasStatus() {
+    public boolean hasContentType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 status = 1 [default = 0];</code>
-     */
-    public int getStatus() {
-      return status_;
-    }
-
-    // required string contentType = 2;
-    public static final int CONTENTTYPE_FIELD_NUMBER = 2;
-    private java.lang.Object contentType_;
-    /**
-     * <code>required string contentType = 2;</code>
-     */
-    public boolean hasContentType() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required string contentType = 2;</code>
+     * <code>required string contentType = 1;</code>
      */
     public java.lang.String getContentType() {
       java.lang.Object ref = contentType_;
@@ -3587,7 +3556,7 @@ public final class SolrProtocol {
       }
     }
     /**
-     * <code>required string contentType = 2;</code>
+     * <code>required string contentType = 1;</code>
      */
     public com.google.protobuf.ByteString
         getContentTypeBytes() {
@@ -3603,24 +3572,23 @@ public final class SolrProtocol {
       }
     }
 
-    // required bytes body = 3;
-    public static final int BODY_FIELD_NUMBER = 3;
+    // required bytes body = 2;
+    public static final int BODY_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString body_;
     /**
-     * <code>required bytes body = 3;</code>
+     * <code>required bytes body = 2;</code>
      */
     public boolean hasBody() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required bytes body = 3;</code>
+     * <code>required bytes body = 2;</code>
      */
     public com.google.protobuf.ByteString getBody() {
       return body_;
     }
 
     private void initFields() {
-      status_ = 0;
       contentType_ = "";
       body_ = com.google.protobuf.ByteString.EMPTY;
     }
@@ -3645,13 +3613,10 @@ public final class SolrProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, status_);
+        output.writeBytes(1, getContentTypeBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getContentTypeBytes());
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, body_);
+        output.writeBytes(2, body_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3664,15 +3629,11 @@ public final class SolrProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, status_);
+          .computeBytesSize(1, getContentTypeBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getContentTypeBytes());
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, body_);
+          .computeBytesSize(2, body_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3790,12 +3751,10 @@ public final class SolrProtocol {
 
       public Builder clear() {
         super.clear();
-        status_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
         contentType_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         body_ = com.google.protobuf.ByteString.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -3827,13 +3786,9 @@ public final class SolrProtocol {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.status_ = status_;
+        result.contentType_ = contentType_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
-        }
-        result.contentType_ = contentType_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
         }
         result.body_ = body_;
         result.bitField0_ = to_bitField0_;
@@ -3852,11 +3807,8 @@ public final class SolrProtocol {
 
       public Builder mergeFrom(org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody other) {
         if (other == org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.getDefaultInstance()) return this;
-        if (other.hasStatus()) {
-          setStatus(other.getStatus());
-        }
         if (other.hasContentType()) {
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
           contentType_ = other.contentType_;
           onChanged();
         }
@@ -3898,49 +3850,16 @@ public final class SolrProtocol {
       }
       private int bitField0_;
 
-      // optional int32 status = 1 [default = 0];
-      private int status_ ;
+      // required string contentType = 1;
+      private java.lang.Object contentType_ = "";
       /**
-       * <code>optional int32 status = 1 [default = 0];</code>
+       * <code>required string contentType = 1;</code>
        */
-      public boolean hasStatus() {
+      public boolean hasContentType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 status = 1 [default = 0];</code>
-       */
-      public int getStatus() {
-        return status_;
-      }
-      /**
-       * <code>optional int32 status = 1 [default = 0];</code>
-       */
-      public Builder setStatus(int value) {
-        bitField0_ |= 0x00000001;
-        status_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 status = 1 [default = 0];</code>
-       */
-      public Builder clearStatus() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        status_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // required string contentType = 2;
-      private java.lang.Object contentType_ = "";
-      /**
-       * <code>required string contentType = 2;</code>
-       */
-      public boolean hasContentType() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required string contentType = 2;</code>
+       * <code>required string contentType = 1;</code>
        */
       public java.lang.String getContentType() {
         java.lang.Object ref = contentType_;
@@ -3954,7 +3873,7 @@ public final class SolrProtocol {
         }
       }
       /**
-       * <code>required string contentType = 2;</code>
+       * <code>required string contentType = 1;</code>
        */
       public com.google.protobuf.ByteString
           getContentTypeBytes() {
@@ -3970,72 +3889,72 @@ public final class SolrProtocol {
         }
       }
       /**
-       * <code>required string contentType = 2;</code>
+       * <code>required string contentType = 1;</code>
        */
       public Builder setContentType(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         contentType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string contentType = 2;</code>
+       * <code>required string contentType = 1;</code>
        */
       public Builder clearContentType() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         contentType_ = getDefaultInstance().getContentType();
         onChanged();
         return this;
       }
       /**
-       * <code>required string contentType = 2;</code>
+       * <code>required string contentType = 1;</code>
        */
       public Builder setContentTypeBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         contentType_ = value;
         onChanged();
         return this;
       }
 
-      // required bytes body = 3;
+      // required bytes body = 2;
       private com.google.protobuf.ByteString body_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>required bytes body = 3;</code>
+       * <code>required bytes body = 2;</code>
        */
       public boolean hasBody() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required bytes body = 3;</code>
+       * <code>required bytes body = 2;</code>
        */
       public com.google.protobuf.ByteString getBody() {
         return body_;
       }
       /**
-       * <code>required bytes body = 3;</code>
+       * <code>required bytes body = 2;</code>
        */
       public Builder setBody(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000002;
         body_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required bytes body = 3;</code>
+       * <code>required bytes body = 2;</code>
        */
       public Builder clearBody() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         body_ = getDefaultInstance().getBody();
         onChanged();
         return this;
@@ -4052,6 +3971,1768 @@ public final class SolrProtocol {
     // @@protoc_insertion_point(class_scope:org.vootoo.client.netty.protocol.ResponseBody)
   }
 
+  public interface KeyValueOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required string key = 1;
+    /**
+     * <code>required string key = 1;</code>
+     */
+    boolean hasKey();
+    /**
+     * <code>required string key = 1;</code>
+     */
+    java.lang.String getKey();
+    /**
+     * <code>required string key = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getKeyBytes();
+
+    // required string value = 2;
+    /**
+     * <code>required string value = 2;</code>
+     */
+    boolean hasValue();
+    /**
+     * <code>required string value = 2;</code>
+     */
+    java.lang.String getValue();
+    /**
+     * <code>required string value = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getValueBytes();
+  }
+  /**
+   * Protobuf type {@code org.vootoo.client.netty.protocol.KeyValue}
+   */
+  public static final class KeyValue extends
+      com.google.protobuf.GeneratedMessage
+      implements KeyValueOrBuilder {
+    // Use KeyValue.newBuilder() to construct.
+    private KeyValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private KeyValue(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final KeyValue defaultInstance;
+    public static KeyValue getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public KeyValue getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private KeyValue(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              key_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              value_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_KeyValue_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.class, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<KeyValue> PARSER =
+        new com.google.protobuf.AbstractParser<KeyValue>() {
+      public KeyValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new KeyValue(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<KeyValue> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required string key = 1;
+    public static final int KEY_FIELD_NUMBER = 1;
+    private java.lang.Object key_;
+    /**
+     * <code>required string key = 1;</code>
+     */
+    public boolean hasKey() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string key = 1;</code>
+     */
+    public java.lang.String getKey() {
+      java.lang.Object ref = key_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          key_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string key = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getKeyBytes() {
+      java.lang.Object ref = key_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        key_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // required string value = 2;
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private java.lang.Object value_;
+    /**
+     * <code>required string value = 2;</code>
+     */
+    public boolean hasValue() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required string value = 2;</code>
+     */
+    public java.lang.String getValue() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          value_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string value = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getValueBytes() {
+      java.lang.Object ref = value_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        value_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private void initFields() {
+      key_ = "";
+      value_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasKey()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasValue()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getKeyBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getValueBytes());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getKeyBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getValueBytes());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.vootoo.client.netty.protocol.SolrProtocol.KeyValue prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.vootoo.client.netty.protocol.KeyValue}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_KeyValue_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.class, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder.class);
+      }
+
+      // Construct using org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        key_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        value_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor;
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue getDefaultInstanceForType() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.getDefaultInstance();
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue build() {
+        org.vootoo.client.netty.protocol.SolrProtocol.KeyValue result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue buildPartial() {
+        org.vootoo.client.netty.protocol.SolrProtocol.KeyValue result = new org.vootoo.client.netty.protocol.SolrProtocol.KeyValue(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.key_ = key_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.value_ = value_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.vootoo.client.netty.protocol.SolrProtocol.KeyValue) {
+          return mergeFrom((org.vootoo.client.netty.protocol.SolrProtocol.KeyValue)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.vootoo.client.netty.protocol.SolrProtocol.KeyValue other) {
+        if (other == org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.getDefaultInstance()) return this;
+        if (other.hasKey()) {
+          bitField0_ |= 0x00000001;
+          key_ = other.key_;
+          onChanged();
+        }
+        if (other.hasValue()) {
+          bitField0_ |= 0x00000002;
+          value_ = other.value_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasKey()) {
+          
+          return false;
+        }
+        if (!hasValue()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.vootoo.client.netty.protocol.SolrProtocol.KeyValue parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.vootoo.client.netty.protocol.SolrProtocol.KeyValue) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required string key = 1;
+      private java.lang.Object key_ = "";
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public java.lang.String getKey() {
+        java.lang.Object ref = key_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          key_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getKeyBytes() {
+        java.lang.Object ref = key_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          key_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public Builder setKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        key_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public Builder clearKey() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        key_ = getDefaultInstance().getKey();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string key = 1;</code>
+       */
+      public Builder setKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        key_ = value;
+        onChanged();
+        return this;
+      }
+
+      // required string value = 2;
+      private java.lang.Object value_ = "";
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public boolean hasValue() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public java.lang.String getValue() {
+        java.lang.Object ref = value_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          value_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getValueBytes() {
+        java.lang.Object ref = value_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          value_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public Builder setValue(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public Builder clearValue() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string value = 2;</code>
+       */
+      public Builder setValueBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.vootoo.client.netty.protocol.KeyValue)
+    }
+
+    static {
+      defaultInstance = new KeyValue(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.vootoo.client.netty.protocol.KeyValue)
+  }
+
+  public interface ExceptionBodyOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required int32 code = 1;
+    /**
+     * <code>required int32 code = 1;</code>
+     */
+    boolean hasCode();
+    /**
+     * <code>required int32 code = 1;</code>
+     */
+    int getCode();
+
+    // repeated string message = 2;
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    java.util.List<java.lang.String>
+    getMessageList();
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    int getMessageCount();
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    java.lang.String getMessage(int index);
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getMessageBytes(int index);
+
+    // repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> 
+        getMetadataList();
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    org.vootoo.client.netty.protocol.SolrProtocol.KeyValue getMetadata(int index);
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder> 
+        getMetadataOrBuilderList();
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder getMetadataOrBuilder(
+        int index);
+
+    // optional string trace = 4;
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    boolean hasTrace();
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    java.lang.String getTrace();
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getTraceBytes();
+  }
+  /**
+   * Protobuf type {@code org.vootoo.client.netty.protocol.ExceptionBody}
+   */
+  public static final class ExceptionBody extends
+      com.google.protobuf.GeneratedMessage
+      implements ExceptionBodyOrBuilder {
+    // Use ExceptionBody.newBuilder() to construct.
+    private ExceptionBody(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private ExceptionBody(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final ExceptionBody defaultInstance;
+    public static ExceptionBody getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public ExceptionBody getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ExceptionBody(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              code_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                message_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              message_.add(input.readBytes());
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                metadata_ = new java.util.ArrayList<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              metadata_.add(input.readMessage(org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.PARSER, extensionRegistry));
+              break;
+            }
+            case 34: {
+              bitField0_ |= 0x00000002;
+              trace_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          message_ = new com.google.protobuf.UnmodifiableLazyStringList(message_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          metadata_ = java.util.Collections.unmodifiableList(metadata_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_ExceptionBody_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.class, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<ExceptionBody> PARSER =
+        new com.google.protobuf.AbstractParser<ExceptionBody>() {
+      public ExceptionBody parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ExceptionBody(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ExceptionBody> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required int32 code = 1;
+    public static final int CODE_FIELD_NUMBER = 1;
+    private int code_;
+    /**
+     * <code>required int32 code = 1;</code>
+     */
+    public boolean hasCode() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 code = 1;</code>
+     */
+    public int getCode() {
+      return code_;
+    }
+
+    // repeated string message = 2;
+    public static final int MESSAGE_FIELD_NUMBER = 2;
+    private com.google.protobuf.LazyStringList message_;
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    public java.util.List<java.lang.String>
+        getMessageList() {
+      return message_;
+    }
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    public int getMessageCount() {
+      return message_.size();
+    }
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    public java.lang.String getMessage(int index) {
+      return message_.get(index);
+    }
+    /**
+     * <code>repeated string message = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMessageBytes(int index) {
+      return message_.getByteString(index);
+    }
+
+    // repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;
+    public static final int METADATA_FIELD_NUMBER = 3;
+    private java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> metadata_;
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> getMetadataList() {
+      return metadata_;
+    }
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    public java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder> 
+        getMetadataOrBuilderList() {
+      return metadata_;
+    }
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    public int getMetadataCount() {
+      return metadata_.size();
+    }
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue getMetadata(int index) {
+      return metadata_.get(index);
+    }
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+     */
+    public org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder getMetadataOrBuilder(
+        int index) {
+      return metadata_.get(index);
+    }
+
+    // optional string trace = 4;
+    public static final int TRACE_FIELD_NUMBER = 4;
+    private java.lang.Object trace_;
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    public boolean hasTrace() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    public java.lang.String getTrace() {
+      java.lang.Object ref = trace_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          trace_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string trace = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTraceBytes() {
+      java.lang.Object ref = trace_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trace_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private void initFields() {
+      code_ = 0;
+      message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      metadata_ = java.util.Collections.emptyList();
+      trace_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasCode()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      for (int i = 0; i < getMetadataCount(); i++) {
+        if (!getMetadata(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, code_);
+      }
+      for (int i = 0; i < message_.size(); i++) {
+        output.writeBytes(2, message_.getByteString(i));
+      }
+      for (int i = 0; i < metadata_.size(); i++) {
+        output.writeMessage(3, metadata_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(4, getTraceBytes());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, code_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < message_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(message_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getMessageList().size();
+      }
+      for (int i = 0; i < metadata_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, metadata_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, getTraceBytes());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.vootoo.client.netty.protocol.ExceptionBody}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_ExceptionBody_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.class, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder.class);
+      }
+
+      // Construct using org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getMetadataFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        code_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (metadataBuilder_ == null) {
+          metadata_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          metadataBuilder_.clear();
+        }
+        trace_ = "";
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor;
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody getDefaultInstanceForType() {
+        return org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.getDefaultInstance();
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody build() {
+        org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody buildPartial() {
+        org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody result = new org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.code_ = code_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          message_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              message_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.message_ = message_;
+        if (metadataBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            metadata_ = java.util.Collections.unmodifiableList(metadata_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.metadata_ = metadata_;
+        } else {
+          result.metadata_ = metadataBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.trace_ = trace_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody) {
+          return mergeFrom((org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody other) {
+        if (other == org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.getDefaultInstance()) return this;
+        if (other.hasCode()) {
+          setCode(other.getCode());
+        }
+        if (!other.message_.isEmpty()) {
+          if (message_.isEmpty()) {
+            message_ = other.message_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureMessageIsMutable();
+            message_.addAll(other.message_);
+          }
+          onChanged();
+        }
+        if (metadataBuilder_ == null) {
+          if (!other.metadata_.isEmpty()) {
+            if (metadata_.isEmpty()) {
+              metadata_ = other.metadata_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureMetadataIsMutable();
+              metadata_.addAll(other.metadata_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.metadata_.isEmpty()) {
+            if (metadataBuilder_.isEmpty()) {
+              metadataBuilder_.dispose();
+              metadataBuilder_ = null;
+              metadata_ = other.metadata_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              metadataBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getMetadataFieldBuilder() : null;
+            } else {
+              metadataBuilder_.addAllMessages(other.metadata_);
+            }
+          }
+        }
+        if (other.hasTrace()) {
+          bitField0_ |= 0x00000008;
+          trace_ = other.trace_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasCode()) {
+          
+          return false;
+        }
+        for (int i = 0; i < getMetadataCount(); i++) {
+          if (!getMetadata(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required int32 code = 1;
+      private int code_ ;
+      /**
+       * <code>required int32 code = 1;</code>
+       */
+      public boolean hasCode() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 code = 1;</code>
+       */
+      public int getCode() {
+        return code_;
+      }
+      /**
+       * <code>required int32 code = 1;</code>
+       */
+      public Builder setCode(int value) {
+        bitField0_ |= 0x00000001;
+        code_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 code = 1;</code>
+       */
+      public Builder clearCode() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        code_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // repeated string message = 2;
+      private com.google.protobuf.LazyStringList message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureMessageIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          message_ = new com.google.protobuf.LazyStringArrayList(message_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public java.util.List<java.lang.String>
+          getMessageList() {
+        return java.util.Collections.unmodifiableList(message_);
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public int getMessageCount() {
+        return message_.size();
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public java.lang.String getMessage(int index) {
+        return message_.get(index);
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMessageBytes(int index) {
+        return message_.getByteString(index);
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public Builder setMessage(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessageIsMutable();
+        message_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public Builder addMessage(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessageIsMutable();
+        message_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public Builder addAllMessage(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureMessageIsMutable();
+        super.addAll(values, message_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public Builder clearMessage() {
+        message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string message = 2;</code>
+       */
+      public Builder addMessageBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessageIsMutable();
+        message_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;
+      private java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> metadata_ =
+        java.util.Collections.emptyList();
+      private void ensureMetadataIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          metadata_ = new java.util.ArrayList<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue>(metadata_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.vootoo.client.netty.protocol.SolrProtocol.KeyValue, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder, org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder> metadataBuilder_;
+
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> getMetadataList() {
+        if (metadataBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(metadata_);
+        } else {
+          return metadataBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public int getMetadataCount() {
+        if (metadataBuilder_ == null) {
+          return metadata_.size();
+        } else {
+          return metadataBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue getMetadata(int index) {
+        if (metadataBuilder_ == null) {
+          return metadata_.get(index);
+        } else {
+          return metadataBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder setMetadata(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue value) {
+        if (metadataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataIsMutable();
+          metadata_.set(index, value);
+          onChanged();
+        } else {
+          metadataBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder setMetadata(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder builderForValue) {
+        if (metadataBuilder_ == null) {
+          ensureMetadataIsMutable();
+          metadata_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          metadataBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder addMetadata(org.vootoo.client.netty.protocol.SolrProtocol.KeyValue value) {
+        if (metadataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataIsMutable();
+          metadata_.add(value);
+          onChanged();
+        } else {
+          metadataBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder addMetadata(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue value) {
+        if (metadataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataIsMutable();
+          metadata_.add(index, value);
+          onChanged();
+        } else {
+          metadataBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder addMetadata(
+          org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder builderForValue) {
+        if (metadataBuilder_ == null) {
+          ensureMetadataIsMutable();
+          metadata_.add(builderForValue.build());
+          onChanged();
+        } else {
+          metadataBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder addMetadata(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder builderForValue) {
+        if (metadataBuilder_ == null) {
+          ensureMetadataIsMutable();
+          metadata_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          metadataBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder addAllMetadata(
+          java.lang.Iterable<? extends org.vootoo.client.netty.protocol.SolrProtocol.KeyValue> values) {
+        if (metadataBuilder_ == null) {
+          ensureMetadataIsMutable();
+          super.addAll(values, metadata_);
+          onChanged();
+        } else {
+          metadataBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder clearMetadata() {
+        if (metadataBuilder_ == null) {
+          metadata_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          metadataBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public Builder removeMetadata(int index) {
+        if (metadataBuilder_ == null) {
+          ensureMetadataIsMutable();
+          metadata_.remove(index);
+          onChanged();
+        } else {
+          metadataBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder getMetadataBuilder(
+          int index) {
+        return getMetadataFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder getMetadataOrBuilder(
+          int index) {
+        if (metadataBuilder_ == null) {
+          return metadata_.get(index);  } else {
+          return metadataBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder> 
+           getMetadataOrBuilderList() {
+        if (metadataBuilder_ != null) {
+          return metadataBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(metadata_);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder addMetadataBuilder() {
+        return getMetadataFieldBuilder().addBuilder(
+            org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder addMetadataBuilder(
+          int index) {
+        return getMetadataFieldBuilder().addBuilder(
+            index, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;</code>
+       */
+      public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder> 
+           getMetadataBuilderList() {
+        return getMetadataFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.vootoo.client.netty.protocol.SolrProtocol.KeyValue, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder, org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder> 
+          getMetadataFieldBuilder() {
+        if (metadataBuilder_ == null) {
+          metadataBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.vootoo.client.netty.protocol.SolrProtocol.KeyValue, org.vootoo.client.netty.protocol.SolrProtocol.KeyValue.Builder, org.vootoo.client.netty.protocol.SolrProtocol.KeyValueOrBuilder>(
+                  metadata_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  getParentForChildren(),
+                  isClean());
+          metadata_ = null;
+        }
+        return metadataBuilder_;
+      }
+
+      // optional string trace = 4;
+      private java.lang.Object trace_ = "";
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public boolean hasTrace() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public java.lang.String getTrace() {
+        java.lang.Object ref = trace_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          trace_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTraceBytes() {
+        java.lang.Object ref = trace_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          trace_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public Builder setTrace(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        trace_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public Builder clearTrace() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        trace_ = getDefaultInstance().getTrace();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string trace = 4;</code>
+       */
+      public Builder setTraceBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        trace_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.vootoo.client.netty.protocol.ExceptionBody)
+    }
+
+    static {
+      defaultInstance = new ExceptionBody(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.vootoo.client.netty.protocol.ExceptionBody)
+  }
+
   public interface SolrResponseOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
@@ -4065,44 +5746,64 @@ public final class SolrProtocol {
      */
     long getRid();
 
-    // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;
+    // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     boolean hasResponseBody();
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody getResponseBody();
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     org.vootoo.client.netty.protocol.SolrProtocol.ResponseBodyOrBuilder getResponseBodyOrBuilder();
 
-    // optional int32 errorCode = 4;
+    // repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;
     /**
-     * <code>optional int32 errorCode = 4;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    boolean hasErrorCode();
+    java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> 
+        getExceptionBodyList();
     /**
-     * <code>optional int32 errorCode = 4;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    int getErrorCode();
-
-    // optional string errorMsg = 5;
+    org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody getExceptionBody(int index);
     /**
-     * <code>optional string errorMsg = 5;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    boolean hasErrorMsg();
+    int getExceptionBodyCount();
     /**
-     * <code>optional string errorMsg = 5;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    java.lang.String getErrorMsg();
+    java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder> 
+        getExceptionBodyOrBuilderList();
     /**
-     * <code>optional string errorMsg = 5;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    com.google.protobuf.ByteString
-        getErrorMsgBytes();
+    org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder getExceptionBodyOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code org.vootoo.client.netty.protocol.SolrResponse}
@@ -4160,7 +5861,7 @@ public final class SolrProtocol {
               rid_ = input.readInt64();
               break;
             }
-            case 26: {
+            case 18: {
               org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.Builder subBuilder = null;
               if (((bitField0_ & 0x00000002) == 0x00000002)) {
                 subBuilder = responseBody_.toBuilder();
@@ -4173,14 +5874,12 @@ public final class SolrProtocol {
               bitField0_ |= 0x00000002;
               break;
             }
-            case 32: {
-              bitField0_ |= 0x00000004;
-              errorCode_ = input.readInt32();
-              break;
-            }
-            case 42: {
-              bitField0_ |= 0x00000008;
-              errorMsg_ = input.readBytes();
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                exceptionBody_ = new java.util.ArrayList<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              exceptionBody_.add(input.readMessage(org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.PARSER, extensionRegistry));
               break;
             }
           }
@@ -4191,6 +5890,9 @@ public final class SolrProtocol {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          exceptionBody_ = java.util.Collections.unmodifiableList(exceptionBody_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -4239,92 +5941,88 @@ public final class SolrProtocol {
       return rid_;
     }
 
-    // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;
-    public static final int RESPONSEBODY_FIELD_NUMBER = 3;
+    // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;
+    public static final int RESPONSEBODY_FIELD_NUMBER = 2;
     private org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody responseBody_;
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     public boolean hasResponseBody() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     public org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody getResponseBody() {
       return responseBody_;
     }
     /**
-     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+     * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
      */
     public org.vootoo.client.netty.protocol.SolrProtocol.ResponseBodyOrBuilder getResponseBodyOrBuilder() {
       return responseBody_;
     }
 
-    // optional int32 errorCode = 4;
-    public static final int ERRORCODE_FIELD_NUMBER = 4;
-    private int errorCode_;
+    // repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;
+    public static final int EXCEPTIONBODY_FIELD_NUMBER = 3;
+    private java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> exceptionBody_;
     /**
-     * <code>optional int32 errorCode = 4;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    public boolean hasErrorCode() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+    public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> getExceptionBodyList() {
+      return exceptionBody_;
     }
     /**
-     * <code>optional int32 errorCode = 4;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    public int getErrorCode() {
-      return errorCode_;
-    }
-
-    // optional string errorMsg = 5;
-    public static final int ERRORMSG_FIELD_NUMBER = 5;
-    private java.lang.Object errorMsg_;
-    /**
-     * <code>optional string errorMsg = 5;</code>
-     */
-    public boolean hasErrorMsg() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    public java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder> 
+        getExceptionBodyOrBuilderList() {
+      return exceptionBody_;
     }
     /**
-     * <code>optional string errorMsg = 5;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    public java.lang.String getErrorMsg() {
-      java.lang.Object ref = errorMsg_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          errorMsg_ = s;
-        }
-        return s;
-      }
+    public int getExceptionBodyCount() {
+      return exceptionBody_.size();
     }
     /**
-     * <code>optional string errorMsg = 5;</code>
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
      */
-    public com.google.protobuf.ByteString
-        getErrorMsgBytes() {
-      java.lang.Object ref = errorMsg_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        errorMsg_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody getExceptionBody(int index) {
+      return exceptionBody_.get(index);
+    }
+    /**
+     * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+     *
+     * <pre>
+     *maybe multi Exception
+     * </pre>
+     */
+    public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder getExceptionBodyOrBuilder(
+        int index) {
+      return exceptionBody_.get(index);
     }
 
     private void initFields() {
       rid_ = 0L;
       responseBody_ = org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.getDefaultInstance();
-      errorCode_ = 0;
-      errorMsg_ = "";
+      exceptionBody_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4341,6 +6039,12 @@ public final class SolrProtocol {
           return false;
         }
       }
+      for (int i = 0; i < getExceptionBodyCount(); i++) {
+        if (!getExceptionBody(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4352,13 +6056,10 @@ public final class SolrProtocol {
         output.writeInt64(1, rid_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(3, responseBody_);
+        output.writeMessage(2, responseBody_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(4, errorCode_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(5, getErrorMsgBytes());
+      for (int i = 0; i < exceptionBody_.size(); i++) {
+        output.writeMessage(3, exceptionBody_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -4375,15 +6076,11 @@ public final class SolrProtocol {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, responseBody_);
+          .computeMessageSize(2, responseBody_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      for (int i = 0; i < exceptionBody_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, errorCode_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(5, getErrorMsgBytes());
+          .computeMessageSize(3, exceptionBody_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -4494,6 +6191,7 @@ public final class SolrProtocol {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getResponseBodyFieldBuilder();
+          getExceptionBodyFieldBuilder();
         }
       }
       private static Builder create() {
@@ -4510,10 +6208,12 @@ public final class SolrProtocol {
           responseBodyBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
-        errorCode_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        errorMsg_ = "";
-        bitField0_ = (bitField0_ & ~0x00000008);
+        if (exceptionBodyBuilder_ == null) {
+          exceptionBody_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          exceptionBodyBuilder_.clear();
+        }
         return this;
       }
 
@@ -4554,14 +6254,15 @@ public final class SolrProtocol {
         } else {
           result.responseBody_ = responseBodyBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
+        if (exceptionBodyBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            exceptionBody_ = java.util.Collections.unmodifiableList(exceptionBody_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.exceptionBody_ = exceptionBody_;
+        } else {
+          result.exceptionBody_ = exceptionBodyBuilder_.build();
         }
-        result.errorCode_ = errorCode_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.errorMsg_ = errorMsg_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4584,13 +6285,31 @@ public final class SolrProtocol {
         if (other.hasResponseBody()) {
           mergeResponseBody(other.getResponseBody());
         }
-        if (other.hasErrorCode()) {
-          setErrorCode(other.getErrorCode());
-        }
-        if (other.hasErrorMsg()) {
-          bitField0_ |= 0x00000008;
-          errorMsg_ = other.errorMsg_;
-          onChanged();
+        if (exceptionBodyBuilder_ == null) {
+          if (!other.exceptionBody_.isEmpty()) {
+            if (exceptionBody_.isEmpty()) {
+              exceptionBody_ = other.exceptionBody_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureExceptionBodyIsMutable();
+              exceptionBody_.addAll(other.exceptionBody_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.exceptionBody_.isEmpty()) {
+            if (exceptionBodyBuilder_.isEmpty()) {
+              exceptionBodyBuilder_.dispose();
+              exceptionBodyBuilder_ = null;
+              exceptionBody_ = other.exceptionBody_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              exceptionBodyBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getExceptionBodyFieldBuilder() : null;
+            } else {
+              exceptionBodyBuilder_.addAllMessages(other.exceptionBody_);
+            }
+          }
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -4603,6 +6322,12 @@ public final class SolrProtocol {
         }
         if (hasResponseBody()) {
           if (!getResponseBody().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getExceptionBodyCount(); i++) {
+          if (!getExceptionBody(i).isInitialized()) {
             
             return false;
           }
@@ -4662,18 +6387,18 @@ public final class SolrProtocol {
         return this;
       }
 
-      // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;
+      // optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;
       private org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody responseBody_ = org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody, org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.Builder, org.vootoo.client.netty.protocol.SolrProtocol.ResponseBodyOrBuilder> responseBodyBuilder_;
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public boolean hasResponseBody() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody getResponseBody() {
         if (responseBodyBuilder_ == null) {
@@ -4683,7 +6408,7 @@ public final class SolrProtocol {
         }
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public Builder setResponseBody(org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody value) {
         if (responseBodyBuilder_ == null) {
@@ -4699,7 +6424,7 @@ public final class SolrProtocol {
         return this;
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public Builder setResponseBody(
           org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.Builder builderForValue) {
@@ -4713,7 +6438,7 @@ public final class SolrProtocol {
         return this;
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public Builder mergeResponseBody(org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody value) {
         if (responseBodyBuilder_ == null) {
@@ -4732,7 +6457,7 @@ public final class SolrProtocol {
         return this;
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public Builder clearResponseBody() {
         if (responseBodyBuilder_ == null) {
@@ -4745,7 +6470,7 @@ public final class SolrProtocol {
         return this;
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.Builder getResponseBodyBuilder() {
         bitField0_ |= 0x00000002;
@@ -4753,7 +6478,7 @@ public final class SolrProtocol {
         return getResponseBodyFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       public org.vootoo.client.netty.protocol.SolrProtocol.ResponseBodyOrBuilder getResponseBodyOrBuilder() {
         if (responseBodyBuilder_ != null) {
@@ -4763,7 +6488,7 @@ public final class SolrProtocol {
         }
       }
       /**
-       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 3;</code>
+       * <code>optional .org.vootoo.client.netty.protocol.ResponseBody responseBody = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody, org.vootoo.client.netty.protocol.SolrProtocol.ResponseBody.Builder, org.vootoo.client.netty.protocol.SolrProtocol.ResponseBodyOrBuilder> 
@@ -4779,111 +6504,316 @@ public final class SolrProtocol {
         return responseBodyBuilder_;
       }
 
-      // optional int32 errorCode = 4;
-      private int errorCode_ ;
-      /**
-       * <code>optional int32 errorCode = 4;</code>
-       */
-      public boolean hasErrorCode() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 errorCode = 4;</code>
-       */
-      public int getErrorCode() {
-        return errorCode_;
-      }
-      /**
-       * <code>optional int32 errorCode = 4;</code>
-       */
-      public Builder setErrorCode(int value) {
-        bitField0_ |= 0x00000004;
-        errorCode_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 errorCode = 4;</code>
-       */
-      public Builder clearErrorCode() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        errorCode_ = 0;
-        onChanged();
-        return this;
+      // repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;
+      private java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> exceptionBody_ =
+        java.util.Collections.emptyList();
+      private void ensureExceptionBodyIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          exceptionBody_ = new java.util.ArrayList<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody>(exceptionBody_);
+          bitField0_ |= 0x00000004;
+         }
       }
 
-      // optional string errorMsg = 5;
-      private java.lang.Object errorMsg_ = "";
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder> exceptionBodyBuilder_;
+
       /**
-       * <code>optional string errorMsg = 5;</code>
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
        */
-      public boolean hasErrorMsg() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional string errorMsg = 5;</code>
-       */
-      public java.lang.String getErrorMsg() {
-        java.lang.Object ref = errorMsg_;
-        if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          errorMsg_ = s;
-          return s;
+      public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> getExceptionBodyList() {
+        if (exceptionBodyBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(exceptionBody_);
         } else {
-          return (java.lang.String) ref;
+          return exceptionBodyBuilder_.getMessageList();
         }
       }
       /**
-       * <code>optional string errorMsg = 5;</code>
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
        */
-      public com.google.protobuf.ByteString
-          getErrorMsgBytes() {
-        java.lang.Object ref = errorMsg_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          errorMsg_ = b;
-          return b;
+      public int getExceptionBodyCount() {
+        if (exceptionBodyBuilder_ == null) {
+          return exceptionBody_.size();
         } else {
-          return (com.google.protobuf.ByteString) ref;
+          return exceptionBodyBuilder_.getCount();
         }
       }
       /**
-       * <code>optional string errorMsg = 5;</code>
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
        */
-      public Builder setErrorMsg(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        errorMsg_ = value;
-        onChanged();
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody getExceptionBody(int index) {
+        if (exceptionBodyBuilder_ == null) {
+          return exceptionBody_.get(index);
+        } else {
+          return exceptionBodyBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder setExceptionBody(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody value) {
+        if (exceptionBodyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.set(index, value);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>optional string errorMsg = 5;</code>
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
        */
-      public Builder clearErrorMsg() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        errorMsg_ = getDefaultInstance().getErrorMsg();
-        onChanged();
+      public Builder setExceptionBody(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder builderForValue) {
+        if (exceptionBodyBuilder_ == null) {
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
-       * <code>optional string errorMsg = 5;</code>
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
        */
-      public Builder setErrorMsgBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        errorMsg_ = value;
-        onChanged();
+      public Builder addExceptionBody(org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody value) {
+        if (exceptionBodyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.add(value);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.addMessage(value);
+        }
         return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder addExceptionBody(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody value) {
+        if (exceptionBodyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.add(index, value);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder addExceptionBody(
+          org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder builderForValue) {
+        if (exceptionBodyBuilder_ == null) {
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.add(builderForValue.build());
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder addExceptionBody(
+          int index, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder builderForValue) {
+        if (exceptionBodyBuilder_ == null) {
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder addAllExceptionBody(
+          java.lang.Iterable<? extends org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody> values) {
+        if (exceptionBodyBuilder_ == null) {
+          ensureExceptionBodyIsMutable();
+          super.addAll(values, exceptionBody_);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder clearExceptionBody() {
+        if (exceptionBodyBuilder_ == null) {
+          exceptionBody_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public Builder removeExceptionBody(int index) {
+        if (exceptionBodyBuilder_ == null) {
+          ensureExceptionBodyIsMutable();
+          exceptionBody_.remove(index);
+          onChanged();
+        } else {
+          exceptionBodyBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder getExceptionBodyBuilder(
+          int index) {
+        return getExceptionBodyFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder getExceptionBodyOrBuilder(
+          int index) {
+        if (exceptionBodyBuilder_ == null) {
+          return exceptionBody_.get(index);  } else {
+          return exceptionBodyBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public java.util.List<? extends org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder> 
+           getExceptionBodyOrBuilderList() {
+        if (exceptionBodyBuilder_ != null) {
+          return exceptionBodyBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(exceptionBody_);
+        }
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder addExceptionBodyBuilder() {
+        return getExceptionBodyFieldBuilder().addBuilder(
+            org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder addExceptionBodyBuilder(
+          int index) {
+        return getExceptionBodyFieldBuilder().addBuilder(
+            index, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.vootoo.client.netty.protocol.ExceptionBody exceptionBody = 3;</code>
+       *
+       * <pre>
+       *maybe multi Exception
+       * </pre>
+       */
+      public java.util.List<org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder> 
+           getExceptionBodyBuilderList() {
+        return getExceptionBodyFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder> 
+          getExceptionBodyFieldBuilder() {
+        if (exceptionBodyBuilder_ == null) {
+          exceptionBodyBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBody.Builder, org.vootoo.client.netty.protocol.SolrProtocol.ExceptionBodyOrBuilder>(
+                  exceptionBody_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  getParentForChildren(),
+                  isClean());
+          exceptionBody_ = null;
+        }
+        return exceptionBodyBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.vootoo.client.netty.protocol.SolrResponse)
@@ -4918,6 +6848,16 @@ public final class SolrProtocol {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_vootoo_client_netty_protocol_ResponseBody_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_vootoo_client_netty_protocol_KeyValue_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_vootoo_client_netty_protocol_ExceptionBody_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_vootoo_client_netty_protocol_SolrResponse_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -4941,14 +6881,18 @@ public final class SolrProtocol {
       "\t\022\014\n\004path\030\003 \002(\t\0226\n\005param\030\004 \003(\0132\'.org.voo" +
       "too.client.netty.protocol.Param\022F\n\rconte" +
       "ntStream\030\005 \003(\0132/.org.vootoo.client.netty",
-      ".protocol.ContentStream\"D\n\014ResponseBody\022" +
-      "\021\n\006status\030\001 \001(\005:\0010\022\023\n\013contentType\030\002 \002(\t\022" +
-      "\014\n\004body\030\003 \002(\014\"\206\001\n\014SolrResponse\022\013\n\003rid\030\001 " +
-      "\002(\003\022D\n\014responseBody\030\003 \001(\0132..org.vootoo.c" +
-      "lient.netty.protocol.ResponseBody\022\021\n\terr" +
-      "orCode\030\004 \001(\005\022\020\n\010errorMsg\030\005 \001(\tB2\n org.vo" +
-      "otoo.client.netty.protocolB\014SolrProtocol" +
-      "H\001"
+      ".protocol.ContentStream\"1\n\014ResponseBody\022" +
+      "\023\n\013contentType\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"&\n\010Ke" +
+      "yValue\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"{\n\rEx" +
+      "ceptionBody\022\014\n\004code\030\001 \002(\005\022\017\n\007message\030\002 \003" +
+      "(\t\022<\n\010metadata\030\003 \003(\0132*.org.vootoo.client" +
+      ".netty.protocol.KeyValue\022\r\n\005trace\030\004 \001(\t\"" +
+      "\251\001\n\014SolrResponse\022\013\n\003rid\030\001 \002(\003\022D\n\014respons" +
+      "eBody\030\002 \001(\0132..org.vootoo.client.netty.pr" +
+      "otocol.ResponseBody\022F\n\rexceptionBody\030\003 \003" +
+      "(\0132/.org.vootoo.client.netty.protocol.Ex",
+      "ceptionBodyB2\n org.vootoo.client.netty.p" +
+      "rotocolB\014SolrProtocolH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4978,13 +6922,25 @@ public final class SolrProtocol {
           internal_static_org_vootoo_client_netty_protocol_ResponseBody_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_vootoo_client_netty_protocol_ResponseBody_descriptor,
-              new java.lang.String[] { "Status", "ContentType", "Body", });
-          internal_static_org_vootoo_client_netty_protocol_SolrResponse_descriptor =
+              new java.lang.String[] { "ContentType", "Body", });
+          internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor =
             getDescriptor().getMessageTypes().get(4);
+          internal_static_org_vootoo_client_netty_protocol_KeyValue_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_org_vootoo_client_netty_protocol_KeyValue_descriptor,
+              new java.lang.String[] { "Key", "Value", });
+          internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor =
+            getDescriptor().getMessageTypes().get(5);
+          internal_static_org_vootoo_client_netty_protocol_ExceptionBody_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_org_vootoo_client_netty_protocol_ExceptionBody_descriptor,
+              new java.lang.String[] { "Code", "Message", "Metadata", "Trace", });
+          internal_static_org_vootoo_client_netty_protocol_SolrResponse_descriptor =
+            getDescriptor().getMessageTypes().get(6);
           internal_static_org_vootoo_client_netty_protocol_SolrResponse_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_vootoo_client_netty_protocol_SolrResponse_descriptor,
-              new java.lang.String[] { "Rid", "ResponseBody", "ErrorCode", "ErrorMsg", });
+              new java.lang.String[] { "Rid", "ResponseBody", "ExceptionBody", });
           return null;
         }
       };

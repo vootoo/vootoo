@@ -40,6 +40,8 @@
 	<logger level="DEBUG" name="org.vootoo" />
 	<logger level="DEBUG" name="io.netty" />
 
+	<logger level="INFO" name="org.vootoo.client.netty.NettySolrClient" />
+
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="OUT" />

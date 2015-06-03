@@ -18,16 +18,19 @@
 package org.vootoo.client.netty.util;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 import org.apache.solr.client.solrj.impl.BinaryResponseParser;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.ContentStreamBase;
 import org.apache.solr.common.util.NamedList;
 import org.vootoo.client.netty.protocol.SolrProtocol;
+import org.vootoo.common.VootooException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +102,9 @@ public class ProtobufUtil {
       public SolrProtocol.ContentStream apply(ContentStream input) {
         SolrProtocol.ContentStream.Builder stream = SolrProtocol.ContentStream.newBuilder();
 
-        stream.setName(input.getName());
+        if(input.getName() != null) {
+          stream.setName(input.getName());
+        }
         String contentType = input.getContentType();
         if(contentType == null) {
           // default javabin
@@ -141,5 +146,84 @@ public class ProtobufUtil {
       }
     }
     return charset;
+  }
+
+  protected static NamedList<String> toSolrExceptionMetadata(List<SolrProtocol.KeyValue> keyValues) {
+    NamedList<String> metadata = new NamedList<>();
+    for(SolrProtocol.KeyValue kv : keyValues) {
+      metadata.add(kv.getKey(), kv.getValue());
+    }
+    return metadata;
+  }
+
+  public static void fillErrorMetadata(SolrProtocol.ExceptionBody.Builder protocolSolrException, NamedList<String> errorMetadata) {
+    if (errorMetadata != null) {
+      //errorMetadata one by one
+      Iterator<Map.Entry<String,String>> it = errorMetadata.iterator();
+      while(it.hasNext()) {
+        Map.Entry<String,String> next = it.next();
+        SolrProtocol.KeyValue.Builder metaBuilder = SolrProtocol.KeyValue.newBuilder();
+        metaBuilder.setKey(next.getKey());
+        metaBuilder.setValue(next.getValue());
+
+        // errorMetadata one
+        protocolSolrException.addMetadata(metaBuilder);
+      }
+    }
+  }
+
+  public static int getErrorInfo(Throwable ex, SolrProtocol.ExceptionBody.Builder exceptionBody) {
+    int code = 500;
+
+    if(ex instanceof SolrException) {
+      SolrException solrExc = (SolrException)ex;
+      code = solrExc.code();
+      fillErrorMetadata(exceptionBody, solrExc.getMetadata());
+    }
+
+    // add first has msg
+    for (Throwable th = ex; th != null; th = th.getCause()) {
+      String msg = th.getMessage();
+      if (msg != null) {
+        exceptionBody.addMessage(msg);
+        break;
+      }
+    }
+
+    //trace
+    if (code == 500 || code < 100) {
+      exceptionBody.setTrace(SolrException.toStr(ex));
+      // non standard codes have undefined results with various servers
+      if (code < 100) {
+        code = 500;
+      }
+    }
+
+    exceptionBody.setCode(code);
+
+    return code;
+  }
+
+  /**
+   * @return SolrException or VootooException
+   */
+  public static VootooException toVootooException(SolrProtocol.ExceptionBody exceptionBody) {
+    String msg = Joiner.on('\n').join(exceptionBody.getMessageList());
+    VootooException.VootooErrorCode vec = VootooException.VootooErrorCode.getErrorCode(exceptionBody.getCode());
+    VootooException ve = new VootooException(vec, msg);
+    if(vec == VootooException.VootooErrorCode.UNKNOWN) {
+      ve.setUnknownCode(exceptionBody.getCode());
+    }
+
+    if(exceptionBody.getMessageCount() > 0) {
+      NamedList<String> metadata = toSolrExceptionMetadata(exceptionBody.getMetadataList());
+      ve.setMetadata(metadata);
+    }
+
+    if(exceptionBody.hasTrace()) {
+      ve.setRemoteTrace(exceptionBody.getTrace());
+    }
+
+    return ve;
   }
 }

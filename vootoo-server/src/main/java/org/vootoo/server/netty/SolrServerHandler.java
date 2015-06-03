@@ -22,10 +22,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.solr.core.CoreContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.client.netty.ProtobufRequestGetter;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.server.RequestExecutor;
 import org.vootoo.server.Vootoo;
 import org.vootoo.server.RequestProcesser;
+
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  */
@@ -57,12 +60,10 @@ public class SolrServerHandler extends SimpleChannelInboundHandler<SolrProtocol.
       ProtobufResponseSetter responeSetter = new ProtobufResponseSetter(solrRequest.getRid());
       try {
         handleRequest(responeSetter, solrRequest);
-
-        //parse applyResult
       } catch (Throwable t) {
-        responeSetter.sendError(500, t);
+        responeSetter.addError(t);
       } finally {
-        // write solr applyResult to channel
+        // write solr protocol response to channel
         ctx.writeAndFlush(responeSetter.buildProtocolResponse());
       }
     }
@@ -77,14 +78,21 @@ public class SolrServerHandler extends SimpleChannelInboundHandler<SolrProtocol.
   protected void channelRead0(ChannelHandlerContext ctx, SolrProtocol.SolrRequest solrRequest) throws Exception {
     SolrRequestRunner solrTask = new SolrRequestRunner(ctx, new ProtobufRequestGetter(solrRequest));
 
-    // solr execute request in thread pool
-    if(Vootoo.isUpdateRequest(solrRequest.getPath())) {
-      updateExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
-    } else {// query request
-      queryExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
-    }
+    try {
+      // solr execute request in thread pool
+      if(Vootoo.isUpdateRequest(solrRequest.getPath())) {
+        if(logger.isDebugEnabled()) {
+          logger.debug("execute update={} rid={} bs={}", new Object[] {solrRequest.getPath(), solrRequest.getRid(), solrRequest.getSerializedSize()});
+        }
+        updateExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
+      } else {// query request
+        queryExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
+      }
+    } catch (RejectedExecutionException e) {
 
-    //TODO RejectedExecutionException
+    }
+    //TODO throwable more detail info for different scene
+
   }
 
   @Override

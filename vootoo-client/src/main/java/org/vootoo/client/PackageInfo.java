@@ -18,50 +18,11 @@
 package org.vootoo.client;
 
 /**
- * 1=json, 2=javabin, 3=xml
- * 4=csv, 5=python, 6=php, 7=phps, 8=avro
+ * @author chenlb on 2015-06-03 09:24.
  */
-public enum ResponseFormat {
-  /** json */
-  JSON(1),
+public class PackageInfo {
 
-  /** javabin*/
-  JAVA_BIN(2),
-
-  /** xml */
-  XML(3),
-
-  /** csv */
-  CSV(4),
-
-  /** python */
-  PYTHON(5),
-
-  /** php */
-  PHP(6),
-
-  /** phps */
-  PHPS(7),
-
-  /** avro */
-  AVRO(8)
-  ;
-  private final int format;
-
-  ResponseFormat (int format) {
-    this.format = format;
-  }
-
-  public int getFormat() {
-    return format;
-  }
-
-  public static ResponseFormat valueOf(int format) {
-    for(ResponseFormat responseFormat : ResponseFormat.values()) {
-      if(responseFormat.getFormat() == format) {
-        return responseFormat;
-      }
-    }
-    throw new IllegalArgumentException("not found format value='"+format+"' ResponseFormat");
+  public static String packageName() {
+    return PackageInfo.class.getPackage().getName();
   }
 }

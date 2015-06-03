@@ -20,9 +20,9 @@ package org.vootoo.server;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import org.apache.solr.util.DefaultSolrThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.common.VootooNamedThreadFactory;
 
 import java.util.concurrent.*;
 
@@ -43,7 +43,7 @@ public class RequestExecutor {
   public RequestExecutor(ExecutorConfig config) {
     this.config = config;
     requestExecutor = new ThreadPoolExecutor(config.getThreadNum(), config.getThreadNum(), config.getThreadKeepAliveMinute(), TimeUnit.MINUTES,
-        new ArrayBlockingQueue<Runnable>(config.getMaxWaitTask()), new VootooNamedThreadFactory(config.getName()));
+        new ArrayBlockingQueue<Runnable>(config.getMaxWaitTask()), new DefaultSolrThreadFactory(config.getName()));
     executorService = MoreExecutors.listeningDecorator(requestExecutor);
   }
 

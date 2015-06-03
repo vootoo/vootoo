@@ -98,7 +98,7 @@ public class NettyClient {
    * @return ChannelRefCounted 已经 incref 一次，完了后，还要 decref。
    * @throws IOException
    */
-  public static ChannelRefCounted connect(Bootstrap bootstrap, final SocketAddress serverAddress, long connectTimeout) throws IOException {
+  public static ChannelRefCounted connect(Bootstrap bootstrap, final SocketAddress serverAddress, long connectTimeout) throws NettyConnectLessException {
 
     ChannelFuture future = null;
     try {

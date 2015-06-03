@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
-package org.vootoo.client.netty;
+package org.vootoo;
 
-import java.io.IOException;
-
-import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
-import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 
-/**
- */
-public class NettyBinaryRequestWriter extends BinaryRequestWriter {
+import java.util.Collection;
 
-  @Override
-  public ContentStream getContentStream(UpdateRequest request) throws IOException {
-    throw new UnsupportedOperationException();
-  }
+/**
+ * @author chenlb on 2015-05-28 15:50.
+ */
+public interface RequestGetter {
+
+  SolrParams getSolrParams();
+
+  Collection<ContentStream> getContentStreams();
+
+  String getCollection();
+
+  String getPath();
 }

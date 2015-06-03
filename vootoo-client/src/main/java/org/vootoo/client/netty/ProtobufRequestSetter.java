@@ -37,6 +37,7 @@ public class ProtobufRequestSetter {
   private SolrProtocol.SolrRequest.Builder solrRequestBuilder = SolrProtocol.SolrRequest.newBuilder();
 
   private SolrParams solrParams;
+  private int timeout;
 
   public ProtobufRequestSetter setCollection(String collection) {
     solrRequestBuilder.setCollection(collection);
@@ -74,5 +75,13 @@ public class ProtobufRequestSetter {
 
   public long getRid() {
     return solrRequestBuilder.getRid();
+  }
+
+  public int getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
   }
 }

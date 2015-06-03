@@ -28,26 +28,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class ResponseCallback {
 
-  private static final Logger logger = LoggerFactory.getLogger(ResponseCallback.class);
-
   private final CountDownLatch finishLatch = new CountDownLatch(1);
   private volatile SolrProtocol.SolrResponse solrResponse;
 
   public void applyResult(SolrProtocol.SolrResponse solrResponse) {
     this.solrResponse = solrResponse;
-    logger.debug("receive response={}", solrResponse);
     finishLatch.countDown();
   }
 
-  public SolrProtocol.SolrResponse awaitResult(long timeout) {
-    try {
-      if(timeout > 0) {
-        finishLatch.await(timeout, TimeUnit.MILLISECONDS);
-      } else {
-        finishLatch.await();
-      }
-    } catch (InterruptedException e) {
-
+  public SolrProtocol.SolrResponse awaitResult(long timeout) throws InterruptedException {
+    if(timeout > 0) {
+      finishLatch.await(timeout, TimeUnit.MILLISECONDS);
+    } else {
+      finishLatch.await();
     }
     return solrResponse;
   }

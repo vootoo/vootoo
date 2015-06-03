@@ -17,35 +17,36 @@
 
 package org.vootoo.client.netty;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import io.netty.channel.Channel;
-import org.apache.solr.client.solrj.*;
+import org.apache.solr.client.solrj.ResponseParser;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
 import org.apache.solr.client.solrj.impl.BinaryResponseParser;
+import org.apache.solr.client.solrj.request.RequestWriter;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.common.util.ContentStreamBase;
 import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.client.PackageInfo;
 import org.vootoo.client.netty.connect.ChannelPool;
 import org.vootoo.client.netty.connect.ChannelRefCounted;
 import org.vootoo.client.netty.connect.SimpleChannelPool;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ProtobufUtil;
+import org.vootoo.common.VootooException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  */
@@ -53,11 +54,16 @@ public class NettySolrClient extends SolrClient {
   private static final long serialVersionUID = 1L;
 
   private static final Logger logger = LoggerFactory.getLogger(NettySolrClient.class);
+  private static final Logger requestLogger = LoggerFactory.getLogger(PackageInfo.packageName()+".Request");
 
   private static final String DEFAULT_PATH = "/select";
 
+  // default timeout
+  private int defaultTimeout = 2000;
+
   private NettyClient nettyClient;
 
+  private final String serverUrl;
   private final String host;
   private final int port;
 
@@ -65,8 +71,7 @@ public class NettySolrClient extends SolrClient {
 
   protected ModifiableSolrParams invariantParams;
   protected ResponseParser parser = new BinaryResponseParser();
-
-  protected NettyBinaryRequestWriter requestWriter = new NettyBinaryRequestWriter();
+  protected RequestWriter requestWriter = new BinaryRequestWriter();
 
   public NettySolrClient(String host, int port) {
     this(host, port, NettyClient.DEFAULT);
@@ -80,6 +85,7 @@ public class NettySolrClient extends SolrClient {
     this.port = port;
     this.nettyClient = nettyClient;
     this.channelPool = channelPool;
+    serverUrl = "netty://"+host+":"+port;
   }
 
   protected ResponseParser createRequest(SolrRequest request, ProtobufRequestSetter saveRequestSetter) throws SolrServerException, IOException {
@@ -107,6 +113,14 @@ public class NettySolrClient extends SolrClient {
       wparams.add(invariantParams);
     }
 
+    Integer timeout = wparams.getInt(CommonParams.TIME_ALLOWED);
+    if(timeout == null) {
+      //mandatory use TIME_ALLOWED
+      timeout = defaultTimeout;
+      wparams.set(CommonParams.TIME_ALLOWED, timeout);
+    }
+
+    saveRequestSetter.setTimeout(timeout);
     saveRequestSetter.setPath(path);
     saveRequestSetter.setSolrParams(wparams);
 
@@ -130,26 +144,27 @@ public class NettySolrClient extends SolrClient {
 
   @Override
   public NamedList<Object> request(SolrRequest request, String collection) throws SolrServerException, IOException {
-    int timeout = request.getParams().getInt("_timeout_", 3000);
+    final ProtobufRequestSetter protobufRequestSetter = new ProtobufRequestSetter();
+    if(collection != null) {
+      protobufRequestSetter.setCollection(collection);
+    }
+
+    ResponseParser parser = createRequest(request, protobufRequestSetter);
+
+    final SolrParams solrParams = protobufRequestSetter.getSolrParams();
+
+    //CommonParams.TIME_ALLOWED + 100ms
+    int timeout = protobufRequestSetter.getTimeout() + 100;
 
     ChannelRefCounted channelRef = null;
 
+    Long rid = null;
     try {
-      final ProtobufRequestSetter protobufRequestSetter = new ProtobufRequestSetter();
-      if(collection != null) {
-        protobufRequestSetter.setCollection(collection);
-      }
-
-      ResponseParser parser = createRequest(request, protobufRequestSetter);
-
-      final SolrParams solrParams = protobufRequestSetter.getSolrParams();
-
       channelRef = channelPool.getChannel(3);
 
       final Channel channel = channelRef.get();
 
       ResponseCallback responseCallBack = new ResponseCallback();
-      long rid = 0;
       do {
         rid = NettyClient.createRid();
         ResponseCallback oldCallBack = NettyClient.responseCallbacks.putIfAbsent(rid, responseCallBack);
@@ -162,36 +177,100 @@ public class NettySolrClient extends SolrClient {
 
       //send netty request
       try {
+        // sync ?
         channel.writeAndFlush(protobufRequestSetter.buildProtocolRequest()).sync();
       } catch (InterruptedException e) {
-        throw new IOException("channel.writeAndFlush throw InterruptedException, rid="+protobufRequestSetter.getRid()+" request=["+solrParams+"]");
+        throw new IOException("channel.writeAndFlush throw InterruptedException, rid="+rid+", ["+serverUrl()+"] request=["+solrParams+"]");
       }
+      SolrProtocol.SolrResponse protocolResponse = null;
 
-      SolrProtocol.SolrResponse protocolResponse = responseCallBack.awaitResult(timeout);
+      try {
+        protocolResponse = responseCallBack.awaitResult(timeout);
+      } catch (InterruptedException e) {
+        logger.warn("await response interrupted, blank result instead of. rid="+protobufRequestSetter.getRid());
+        return new NamedList<>();
+      }
 
       if(protocolResponse == null) {
-        throw new TimeoutException("rid="+rid+" request=["+request.getParams()+"] is timeout="+timeout+", request=["+solrParams+"]");
+        VootooException vootooException = new VootooException(VootooException.VootooErrorCode.TIMEOUT,
+            "rid=" + rid + ", [" + serverUrl() + "] is timeout=" + timeout + ", request=[" + solrParams + "]");
+        vootooException.setRemoteServer(serverUrl());
+        throw vootooException;
       }
+
+      if(logger.isDebugEnabled()) {
+        logger.debug("rid={}, response size={}", rid, protocolResponse.getSerializedSize());
+      }
+
+      // protocolResponse error
+      if(protocolResponse.getExceptionBodyCount() > 0) {
+        List<VootooException> solrExcs = new ArrayList<>(protocolResponse.getExceptionBodyCount());
+        VootooException firstE = null;
+        int eNum = 0;
+        //has exception
+        for(SolrProtocol.ExceptionBody e : protocolResponse.getExceptionBodyList()) {
+          VootooException se = ProtobufUtil.toVootooException(e);
+          se.setRemoteServer(serverUrl());
+          if(se.code() != VootooException.ErrorCode.UNKNOWN.code) {
+            //use first SolrException without ErrorCode.UNKNOWN
+            if(firstE == null) {
+              firstE = se;
+            }
+          }
+          solrExcs.add(se);
+
+          eNum++;
+          if(logger.isDebugEnabled()) {
+            logger.debug("[WARN] rid={}, [{}] response exception ({}/{}), code={}, msg={}, meta={}, trace={}", new Object[] {
+                rid, se.getRemoteServer(), eNum, protocolResponse.getExceptionBodyCount(),
+                se.code(), se.getMessage(), se.getMetadata(), se.getRemoteTrace()
+            });
+          } else if(logger.isInfoEnabled()) {
+            logger.info("[WARN] rid={}, [{}] response exception ({}/{}), code={}, msg={}, meta={}", new Object[] {
+                rid, se.getRemoteServer(), eNum, protocolResponse.getExceptionBodyCount(),
+                se.code(), se.getMessage(), se.getMetadata()
+            });
+          }
+
+        }//for exc body
+
+        if(firstE != null) {
+          logger.warn("rid={}, [{}] response exception, ErrorCode={}, msg={}, meta={}", new Object[] {
+              rid, firstE.getRemoteServer(), firstE.code(), firstE.getMessage(), firstE.getMetadata()
+          });
+          //meta contain server url
+          throw firstE;
+        } else {
+          //all Exception is ErrorCode.UNKNOWN
+          //convert SolrServerException
+          throw new SolrServerException("rid="+rid+", ["+serverUrl()+"] has unknow error", solrExcs.get(0));
+        }
+      }//has exception
 
       InputStream responseInputStream = ProtobufUtil.getSolrResponseInputStream(protocolResponse);
 
       if(responseInputStream == null) {
         // not response body
+        logger.warn("rid={}, [{}] not response body, params={}", rid, serverUrl(), solrParams);
         return new NamedList<>();
       }
 
       String charset = ProtobufUtil.getResponseBodyCharset(protocolResponse);
 
       return parser.processResponse(responseInputStream, charset);
-    } catch (TimeoutException e) {
-      throw new SolrServerException(e.getMessage(), e);
     } finally {
+      if(rid != null) {
+        NettyClient.responseCallbacks.remove(rid);
+      }
       if(channelRef != null) {
         channelRef.decref();
       }
     }
   }
 
+  public String serverUrl() {
+    return serverUrl;
+  }
 
   @Override
   public void shutdown () {
@@ -206,7 +285,19 @@ public class NettySolrClient extends SolrClient {
     return parser;
   }
 
-  public void setParser(ResponseParser parser) {
-    this.parser = parser;
+  /**
+   * Note: This setter method is <b>not thread-safe</b>.
+   *
+   * @param responseParser
+   *          Default Response Parser chosen to parse the response if the parser
+   *          were not specified as part of the request.
+   * @see org.apache.solr.client.solrj.SolrRequest#getResponseParser()
+   */
+  public void setParser(ResponseParser responseParser) {
+    this.parser = responseParser;
+  }
+
+  public void setRequestWriter(RequestWriter requestWriter) {
+    this.requestWriter = requestWriter;
   }
 }

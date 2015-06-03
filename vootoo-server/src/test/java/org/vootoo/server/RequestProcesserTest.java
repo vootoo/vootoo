@@ -21,8 +21,12 @@ import junit.framework.Assert;
 import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.client.solrj.request.RequestWriter;
+import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.NamedList;
@@ -31,10 +35,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.RequestGetter;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ProtobufUtil;
 import org.vootoo.server.netty.ProtobufResponseSetter;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.UUID;
@@ -46,12 +52,12 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
 
   private static final Logger logger = LoggerFactory.getLogger(RequestProcesserTest.class);
 
-  private static class MemReqestGetter implements RequestGetter {
+  private static class QueryReqestGetter implements RequestGetter {
 
     SolrQuery query;
 
-    public MemReqestGetter(String id) {
-      query = new SolrQuery("*:*");
+    public QueryReqestGetter(String id) {
+      query = new SolrQuery("id:\""+id+"\"");
       query.set("_timeout_", 2000);
       query.set("indent", "on");
       query.set("wt", "xml");
@@ -78,6 +84,43 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     }
   }
 
+  private static class UpdateRequestGetter implements RequestGetter {
+
+    SolrInputDocument sid;
+    public UpdateRequestGetter(String id) {
+      sid = new SolrInputDocument();
+      sid.addField("id", id);
+    }
+
+    @Override
+    public SolrParams getSolrParams() {
+      return new ModifiableSolrParams().set("wt", "xml");
+    }
+
+    @Override
+    public Collection<ContentStream> getContentStreams() {
+      UpdateRequest updateRequest = new UpdateRequest();
+      updateRequest.add(sid);
+      RequestWriter writer = new RequestWriter();
+      try {
+        return writer.getContentStreams(updateRequest);
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException("getContentStreams fail!", e);
+      }
+    }
+
+    @Override
+    public String getCollection() {
+      return "collection1";
+    }
+
+    @Override
+    public String getPath() {
+      return "/update";
+    }
+  }
+
   private static class MemResponseSetter extends ProtobufResponseSetter {
     public MemResponseSetter() {
       super(1);
@@ -90,15 +133,9 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     }
 
     @Override
-    public void setStatus(int status) {
-      logger.debug("setStatus={}", status);
-      super.setStatus(status);
-    }
-
-    @Override
-    public void sendError(int code, Throwable ex) {
-      logger.debug("sendError=" + code, ex);
-      super.sendError(code, ex);
+    public void addError(int code, Throwable ex) {
+      logger.debug("addError=" + code, ex);
+      super.addError(code, ex);
     }
 
     @Override
@@ -108,9 +145,9 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream getResponseOutputStream() {
       logger.debug("getOutputStream for write QueryResponse");
-      return super.getOutputStream();
+      return super.getResponseOutputStream();
     }
 
     @Override
@@ -125,14 +162,20 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     initCore("solrconfig.xml", "schema.xml");
   }
 
-  protected String addTestDoc() {
-    String id = UUID.randomUUID().toString();
-    assertU(adoc("id", id));
-    assertU(commit());
+  protected String createDocId() {
+    return UUID.randomUUID().toString();
+  }
 
+  protected void assertQueryId(String id) {
     assertQ(req("fl", "*,score", "q", "id:\""+id+"\""), "//*[@numFound='1']",
         "//result/doc[1]/str[@name='id'][.='"+id+"']");
+  }
 
+  protected String addTestDoc() {
+    String id = createDocId();
+    assertU(adoc("id", id));
+    assertU(commit());
+    assertQueryId(id);
     return id;
   }
 
@@ -166,7 +209,7 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
   }
 
   @Test
-  public void testHandleRequest() throws Exception {
+  public void test_query_request() throws Exception {
     String id = addTestDoc();
 
     ProtobufResponseSetter responeSetter = new MemResponseSetter();
@@ -174,8 +217,25 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     RequestProcesser requestProcesser = new RequestProcesser(h.getCoreContainer(), responeSetter);
 
     //do handle request
-    requestProcesser.handleRequest(new MemReqestGetter(id));
+    requestProcesser.handleRequest(new QueryReqestGetter(id));
 
     assertIdResult(processResponse(responeSetter.buildProtocolResponse()), id);
+  }
+
+  @Test
+  public void test_update_request() {
+    String id = createDocId();
+    ProtobufResponseSetter responeSetter = new MemResponseSetter();
+
+    RequestProcesser requestProcesser = new RequestProcesser(h.getCoreContainer(), responeSetter);
+
+    requestProcesser.handleRequest(new UpdateRequestGetter(id));
+
+
+    QueryResponse queryResponse = processResponse(responeSetter.buildProtocolResponse());
+
+    System.out.println(queryResponse);
+    assertU(commit());
+    assertQueryId(id);
   }
 }

@@ -35,7 +35,6 @@ import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.ContentStreamHandlerBase;
 import org.apache.solr.logging.MDCUtils;
 import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.request.SolrRequestInfo;
 import org.apache.solr.response.QueryResponseWriter;
@@ -43,19 +42,22 @@ import org.apache.solr.response.QueryResponseWriterUtil;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.servlet.ResponseUtils;
 import org.apache.solr.servlet.SolrRequestParsers;
-import org.apache.solr.util.RTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.RequestGetter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.vootoo.server.Vootoo.*;
 
 /**
- * process solr request
+ * process solr request, copy and Modify from {@link org.apache.solr.servlet.SolrDispatchFilter#doFilter(ServletRequest, ServletResponse, FilterChain)}
  *
  * @author chenlb on 2015-05-25 11:14.
  */
@@ -74,6 +76,8 @@ public class RequestProcesser {
   //The states of client that is invalid in this request
   private Map<String, Integer> invalidStates = null;
 
+  SolrParams solrParams;
+
   public RequestProcesser(CoreContainer cores, ResponseSetter responseSetter) {
     this.cores = cores;
     this.responseSetter = responseSetter;
@@ -83,7 +87,7 @@ public class RequestProcesser {
     MDCUtils.clearMDC();
 
     String path = requestGetter.getPath();
-    SolrParams solrParams = requestGetter.getSolrParams();
+    solrParams = requestGetter.getSolrParams();
     SolrRequestHandler handler = null;
     String corename = "";
     String origCorename = null;
@@ -111,9 +115,7 @@ public class RequestProcesser {
       // Check for container handlers
       handler = cores.getRequestHandler(path);
       if (handler != null) {
-        //TODO admin request SolrRequestParsers.DEFAULT 2MB limit
-        /** Default instance for e.g. admin requests. Limits to 2 MB uploads and does not allow remote streams. */
-        solrReq = buildSolrQueryRequest(requestGetter);
+        solrReq = parseSolrQueryRequest(SolrRequestParsers.DEFAULT, requestGetter);
         handleAdminRequest(handler, solrReq);
         return;
       }
@@ -176,38 +178,6 @@ public class RequestProcesser {
           addMDCValues(cores, core);
         }
 
-        // if we couldn't find it locally, look on other nodes
-        if (core == null && idx > 0) {
-          //TODO look other nodes
-          /*
-          String coreUrl = getRemotCoreUrl(cores, corename, origCorename);
-          // don't proxy for internal update requests
-          SolrParams queryParams = SolrRequestParsers.parseQueryString(req.getQueryString());
-          invalidStates = checkStateIsValid(cores, queryParams.get(CloudSolrClient.STATE_VERSION));
-          if (coreUrl != null
-              && queryParams
-              .get(DistributingUpdateProcessorFactory.DISTRIB_UPDATE_PARAM) == null) {
-            path = path.substring(idx);
-            if (invalidStates != null) {
-              //it does not make sense to send the request to a remote node
-              throw new SolrException(SolrException.ErrorCode.INVALID_STATE, new String(ZkStateReader.toJSON(invalidStates), org.apache.lucene.util.IOUtils.UTF_8));
-            }
-            remoteQuery(coreUrl + path, req, solrReq, resp);
-            return;
-          } else {
-            if (!retry) {
-              // we couldn't find a core to work with, try reloading aliases
-              // TODO: it would be nice if admin ui elements skipped this...
-              ZkStateReader reader = cores.getZkController()
-                  .getZkStateReader();
-              reader.updateAliases();
-              doFilter(request, applyResult, chain, true);
-              return;
-            }
-          }
-          */
-        }
-
         // try the default core
         if (core == null) {
           core = cores.getCore("");
@@ -233,27 +203,14 @@ public class RequestProcesser {
             //may be a restlet path
             // Handle /schema/* paths via Restlet
             if( path.equals("/schema") || path.startsWith("/schema/")) {
-              //TODO schema request
-              /*
-              solrReq = parser.parse(core, path, req);
-              SolrRequestInfo.setRequestInfo(new SolrRequestInfo(solrReq, new SolrQueryResponse()));
-              if( path.equals(req.getServletPath()) ) {
-                // avoid endless loop - pass through to Restlet via webapp
-                chain.doFilter(request, applyResult);
-              } else {
-                // forward rewritten URI (without path prefix and core/collection name) to Restlet
-                req.getRequestDispatcher(path).forward(request, applyResult);
-              }
-              */
-              return;
+              throw new SolrException( SolrException.ErrorCode.BAD_REQUEST, "unsupport /schema/**, use http solr");
             }
 
           }
           // no handler yet but allowed to handle select; let's check
-
           if( handler == null && parser.isHandleSelect() ) {
             if( "/select".equals( path ) || "/select/".equals( path ) ) {
-              solrReq = buildSolrQueryRequest(requestGetter);
+              solrReq = parseSolrQueryRequest(parser, requestGetter);
 
               invalidStates = checkStateIsValid(cores,solrReq.getParams().get(CloudSolrClient.STATE_VERSION));
               String qt = solrReq.getParams().get( CommonParams.QT );
@@ -274,7 +231,7 @@ public class RequestProcesser {
         if( handler != null ) {
           // if not a /select, create the request
           if( solrReq == null ) {
-            solrReq = buildSolrQueryRequest(requestGetter);
+            solrReq = parseSolrQueryRequest(parser, requestGetter);
           }
 
           if (usingAliases) {
@@ -292,7 +249,7 @@ public class RequestProcesser {
         }
       }
       logger.debug("no handler or core retrieved for {}, follow through...", path);
-      throw new SolrException( SolrException.ErrorCode.BAD_REQUEST, "no handler or core retrieved for "+path+", params="+solrParams);
+      throw new SolrException( SolrException.ErrorCode.BAD_REQUEST, "no handler or core retrieved for "+path);
     }
     catch (Throwable ex) {
       sendError(core, solrReq, ex);
@@ -327,10 +284,8 @@ public class RequestProcesser {
   }
 
   protected void execute(SolrRequestHandler handler, SolrQueryRequest sreq, SolrQueryResponse rsp) {
-    // a custom filter could add more stuff to the request before passing it on.
-    // for example: sreq.getContext().put( "HttpServletRequest", req );
     // used for logging query stats in SolrCore.execute()
-    sreq.getContext().put( "webapp", "vootoo-solr" );
+    sreq.getContext().put( "webapp", "vootoo" );
     sreq.getCore().execute( handler, sreq, rsp );
   }
 
@@ -350,25 +305,28 @@ public class RequestProcesser {
     if (solrRsp.getException() != null) {
       NamedList info = new SimpleOrderedMap();
       int code = ResponseUtils.getErrorInfo(solrRsp.getException(), info, logger);
-      solrRsp.add("error", info);
-      responseSetter.setStatus(code);
+      //solrRsp.add("error", info);
+      // use protocol response exception instead of set 'error' response return to client,
+      responseSetter.setSolrResponseException(code, info);
     }
 
-    QueryResponseWriterUtil.writeQueryResponse(responseSetter.getOutputStream(), responseWriter, solrReq, solrRsp, ct);
+    QueryResponseWriterUtil.writeQueryResponse(responseSetter.getResponseOutputStream(), responseWriter, solrReq, solrRsp, ct);
 
+    //fire QueryResponse write Complete
     responseSetter.writeQueryResponseComplete(solrRsp);
   }
 
   protected void sendError(SolrCore core, SolrQueryRequest req, Throwable ex) {
-    responseSetter.sendError(500, ex);
+    responseSetter.addError(ex);
   }
 
-  protected SolrQueryRequest buildSolrQueryRequest(RequestGetter requestGetter) {
-    SolrQueryRequestBase sreq = new VootooQueryRequest(core, requestGetter.getSolrParams(), new RTimer());
 
+  protected SolrQueryRequest parseSolrQueryRequest(SolrRequestParsers parser, RequestGetter requestGetter) throws Exception {
+    ArrayList<ContentStream> streams = new ArrayList<>(1);
     if( requestGetter.getContentStreams() != null && requestGetter.getContentStreams().size() > 0 ) {
-      sreq.setContentStreams(requestGetter.getContentStreams());
+      streams.addAll(requestGetter.getContentStreams());
     }
+    SolrQueryRequest sreq = parser.buildRequestFrom(core, requestGetter.getSolrParams(), streams);
 
     // Handlers and login will want to know the path. If it contains a ':'
     // the handler could use it for RESTful URLs

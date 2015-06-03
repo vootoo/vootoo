@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.vootoo.server.netty;
+package org.vootoo.client.netty;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ProtobufUtil;
-import org.vootoo.server.RequestGetter;
+import org.vootoo.RequestGetter;
 
 /**
  * decode protobuf solr request for server
