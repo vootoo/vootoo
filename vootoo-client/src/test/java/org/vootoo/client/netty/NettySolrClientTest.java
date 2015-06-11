@@ -307,7 +307,7 @@ public class NettySolrClientTest {
   protected void assertVootooException(Throwable e, int code, SolrQuery solrQuery, boolean hasTrace) {
     Assert.assertTrue(e instanceof VootooException);
     Assert.assertEquals(((VootooException)e).code(), code);
-    Assert.assertEquals(((VootooException)e).getMessage(), solrQuery.get(RequestParams.ErrorMsg));
+    Assert.assertEquals(e.getMessage(), solrQuery.get(RequestParams.ErrorMsg));
     Assert.assertEquals(hasTrace, ((VootooException)e).getRemoteTrace() != null);
   }
 
