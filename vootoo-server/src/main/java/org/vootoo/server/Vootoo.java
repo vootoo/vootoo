@@ -37,13 +37,31 @@ import java.util.*;
  */
 public class Vootoo {
 
-  public static final String UPDATE_PREFIX = "/update";
+  public static final String UPDATE_PATH = "/update";
+  public static final String UPDATE_PREFIX = "/update/";
+
+  public static final String MDC_NAME_RID = "rid";
+  public static final String MDC_NAME_REQUEST_SIZE = "request_size";
+  public static final String MDC_NAME_REQUEST_PATH = "request_path";
+  public static final String MDC_NAME_EXECUTE_TIME = "execute_time";
+  public static final String MDC_NAME_WAIT_TIME = "wait_time";
+  public static final String MDC_NAME_REMOTE_ADDRESS = "remote_address";//remoteAddress
 
   public static boolean isUpdateRequest(String path) {
     if(StringUtils.isBlank(path)) {
       return false;
     }
-    return path.startsWith(UPDATE_PREFIX);
+    return UPDATE_PATH.equals(path) || path.startsWith(UPDATE_PREFIX);
+  }
+
+  public static String requestLogName(String suffix) {
+    String mySuffix;
+    if(suffix == null) {
+      mySuffix = "request";
+    } else {
+      mySuffix = "request."+suffix;
+    }
+    return Vootoo.class.getPackage().getName()+"."+mySuffix;
   }
 
   public static void addMDCValues(CoreContainer cores, SolrCore core) {

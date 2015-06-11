@@ -79,6 +79,15 @@ public class ProtobufRequestGetter implements RequestGetter {
    * @return
    */
   public boolean isTimeout(int expectTimeout) {
-    return (System.currentTimeMillis() - receiveTime) > expectTimeout;
+    return useTime() > expectTimeout;
+  }
+
+  public long useTime() {
+    return System.currentTimeMillis() - receiveTime;
+  }
+
+  @Override
+  public int requestSize() {
+    return protocolSolrRequest.getSerializedSize();
   }
 }

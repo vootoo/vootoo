@@ -27,7 +27,6 @@
 
 	<appender name="OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>logs/out.log</file>
-		<!--encoding>UTF-8</encoding-->
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>logs/out.log.%d{yyyy-MM-dd}</fileNamePattern>
 			<maxHistory>7</maxHistory>
@@ -37,8 +36,39 @@
 		</encoder>
 	</appender>
 
+	<appender name="SOLR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/solr.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/solr.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="QUERY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/query.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/query.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] rid=%X{rid} path=%X{request_path} core=%X{core} RS=%X{request_size} WT=%X{wait_time} ET=%X{execute_time} r=%X{remote_address} %msg%n</pattern>
+		</encoder>
+	</appender>
+
 	<logger level="DEBUG" name="org.vootoo" />
 	<logger level="DEBUG" name="io.netty" />
+
+	<logger level="INFO" name="org.apache.solr" additivity="false">
+		<appender-ref ref="SOLR" />
+	</logger>
+
+	<!--logger level="INFO" name="org.vootoo.server.request.Update" /-->
+	<logger level="INFO" name="org.vootoo.server.request" additivity="false">
+		<appender-ref ref="QUERY" />
+	</logger>
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

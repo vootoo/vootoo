@@ -52,7 +52,7 @@ public class VootooSolrDispatchFilter extends SolrDispatchFilter {
   @Override
   public void destroy() {
     // destroy netty server
-    destoryNettyServer();
+    destroyNettyServer();
     super.destroy();
   }
 
@@ -69,8 +69,9 @@ public class VootooSolrDispatchFilter extends SolrDispatchFilter {
       }
     }
 
-    //TODO start netty
-    nettyServer = new SolrNettyServer(getCores(), Integer.parseInt(nettyP.getProperty("port", "8983")));
+    // start netty
+    //TODO set many netty properties
+    nettyServer = new SolrNettyServer(getCores(), Integer.parseInt(nettyP.getProperty("port", "8001")));
     try {
       nettyServer.startServer(false);
     } catch (Exception e) {
@@ -79,7 +80,7 @@ public class VootooSolrDispatchFilter extends SolrDispatchFilter {
     }
   }
 
-  protected void destoryNettyServer() {
+  protected void destroyNettyServer() {
     if(nettyServer != null) {
       try {
         nettyServer.stopServer();

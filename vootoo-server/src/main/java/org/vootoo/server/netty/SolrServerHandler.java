@@ -24,16 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.ProtobufRequestGetter;
 import org.vootoo.client.netty.protocol.SolrProtocol;
+import org.vootoo.common.VootooException;
 import org.vootoo.server.RequestExecutor;
 import org.vootoo.server.Vootoo;
-import org.vootoo.server.RequestProcesser;
 
 import java.util.concurrent.RejectedExecutionException;
 
 /**
  */
 public class SolrServerHandler extends SimpleChannelInboundHandler<SolrProtocol.SolrRequest> {
-
   private static final Logger logger = LoggerFactory.getLogger(SolrServerHandler.class);
 
   private final CoreContainer coreContainer;
@@ -46,53 +45,46 @@ public class SolrServerHandler extends SimpleChannelInboundHandler<SolrProtocol.
     this.updateExecutor = updateExecutor;
   }
 
-  private class SolrRequestRunner implements Runnable {
-    private ChannelHandlerContext ctx;
-    private ProtobufRequestGetter solrRequest;
+  private class NettySolrRequestRunner extends SolrRequestRunner {
 
-    public SolrRequestRunner(ChannelHandlerContext ctx, ProtobufRequestGetter solrRequest) {
+    private final ChannelHandlerContext ctx;
+
+    public NettySolrRequestRunner(ChannelHandlerContext ctx, ProtobufRequestGetter solrRequest) {
+      super(coreContainer, solrRequest);
       this.ctx = ctx;
-      this.solrRequest = solrRequest;
     }
 
     @Override
-    public void run() {
-      ProtobufResponseSetter responeSetter = new ProtobufResponseSetter(solrRequest.getRid());
-      try {
-        handleRequest(responeSetter, solrRequest);
-      } catch (Throwable t) {
-        responeSetter.addError(t);
-      } finally {
-        // write solr protocol response to channel
-        ctx.writeAndFlush(responeSetter.buildProtocolResponse());
-      }
+    protected String getSocketAddress() {
+      return ctx.channel().remoteAddress().toString();
     }
 
-    protected void handleRequest(ProtobufResponseSetter responeSetter, ProtobufRequestGetter solrRequest) {
-      RequestProcesser requestHandler = new RequestProcesser(coreContainer, responeSetter);
-      requestHandler.handleRequest(solrRequest);
+    @Override
+    protected void writeProtocolResponse(SolrProtocol.SolrResponse protocolResponse) {
+      ctx.writeAndFlush(protocolResponse);
     }
   }
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, SolrProtocol.SolrRequest solrRequest) throws Exception {
-    SolrRequestRunner solrTask = new SolrRequestRunner(ctx, new ProtobufRequestGetter(solrRequest));
+    SolrRequestRunner solrTask = new NettySolrRequestRunner(ctx, new ProtobufRequestGetter(solrRequest));
 
     try {
       // solr execute request in thread pool
       if(Vootoo.isUpdateRequest(solrRequest.getPath())) {
-        if(logger.isDebugEnabled()) {
-          logger.debug("execute update={} rid={} bs={}", new Object[] {solrRequest.getPath(), solrRequest.getRid(), solrRequest.getSerializedSize()});
-        }
+        solrTask.setIsUpdate(true);
         updateExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
       } else {// query request
+        solrTask.setIsUpdate(false);
         queryExecutor.submitTask(solrTask, SolrProtocol.SolrResponse.class);
       }
     } catch (RejectedExecutionException e) {
-
+      solrTask.logRejected();
+      //server is too busy
+      ProtobufResponseSetter responeSetter = new ProtobufResponseSetter(solrRequest.getRid());
+      responeSetter.addError(VootooException.VootooErrorCode.TOO_MANY_REQUESTS.code, "RequestExecutor thread pool is full, server is too busy!");
+      ctx.writeAndFlush(responeSetter.buildProtocolResponse());
     }
-    //TODO throwable more detail info for different scene
-
   }
 
   @Override

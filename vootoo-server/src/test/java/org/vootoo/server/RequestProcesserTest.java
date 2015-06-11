@@ -82,6 +82,11 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     public String getPath() {
       return "/select";
     }
+
+    @Override
+    public int requestSize() {
+      return 10;
+    }
   }
 
   private static class UpdateRequestGetter implements RequestGetter {
@@ -118,6 +123,11 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     @Override
     public String getPath() {
       return "/update";
+    }
+
+    @Override
+    public int requestSize() {
+      return 10;
     }
   }
 

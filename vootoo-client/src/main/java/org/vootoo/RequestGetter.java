@@ -34,4 +34,6 @@ public interface RequestGetter {
   String getCollection();
 
   String getPath();
+
+  int requestSize();
 }

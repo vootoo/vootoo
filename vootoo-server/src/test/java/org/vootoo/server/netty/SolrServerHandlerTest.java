@@ -33,10 +33,7 @@ import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.NettyClient;
@@ -162,8 +159,6 @@ public class SolrServerHandlerTest extends RequestProcesserTest {
     String id = addTestDoc();
 
     QueryResponse queryResponse = solrClient.query("collection1", createIdQuery(id));
-
-    //System.out.println(queryResponse);
 
     assertIdResult(queryResponse, id);
   }
