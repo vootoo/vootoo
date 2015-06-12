@@ -82,6 +82,7 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
   public Channel acquireConnect() throws NettyConnectLessException {
     Future<Channel> future = acquire();
 
+    // see https://netty.io/4.0/api/io/netty/channel/ChannelFuture.html
     // use bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout);
     // so await without timeout
     future.awaitUninterruptibly();

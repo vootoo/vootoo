@@ -87,6 +87,7 @@ public class NettyClient {
     return responseCallbacks.remove(rid);
   }
 
+  @Deprecated
   protected ChannelRefCounted connectChannel(InetSocketAddress serverAddress, long connectTimeout) throws IOException {
     return connect(bootstrap, serverAddress, connectTimeout);
   }
@@ -97,6 +98,7 @@ public class NettyClient {
    * @param connectTimeout
    * @return ChannelRefCounted 已经 incref 一次，完了后，还要 decref。
    * @throws IOException
+   * @deprecated
    */
   public static ChannelRefCounted connect(Bootstrap bootstrap, final SocketAddress serverAddress, long connectTimeout) throws NettyConnectLessException {
 
@@ -107,6 +109,7 @@ public class NettyClient {
       throw new NettyConnectLessException("connect fail by InterruptedException, tcp=" + serverAddress);
     }
 
+    // see https://netty.io/4.0/api/io/netty/channel/ChannelFuture.html
     // use bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
     // so await without timeout
     future.awaitUninterruptibly();
