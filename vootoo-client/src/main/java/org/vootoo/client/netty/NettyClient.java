@@ -79,8 +79,8 @@ public class NettyClient {
     return ridSeed.incrementAndGet();
   }
 
-  public static void put(long rid, ResponseCallback callback) {
-    responseCallbacks.put(rid, callback);
+  public static ResponseCallback putIfAbsent(long rid, ResponseCallback callback) {
+    return responseCallbacks.putIfAbsent(rid, callback);
   }
 
   public static ResponseCallback remove(long rid) {

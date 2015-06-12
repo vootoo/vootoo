@@ -167,7 +167,7 @@ public class NettySolrClient extends SolrClient {
       ResponseCallback responseCallBack = new ResponseCallback();
       do {
         rid = NettyClient.createRid();
-        ResponseCallback oldCallBack = NettyClient.responseCallbacks.putIfAbsent(rid, responseCallBack);
+        ResponseCallback oldCallBack = NettyClient.putIfAbsent(rid, responseCallBack);
         if(oldCallBack == null) {
           break;
         }
