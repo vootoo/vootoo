@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.vootoo.client.netty.connect;
+package org.vootoo.common;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

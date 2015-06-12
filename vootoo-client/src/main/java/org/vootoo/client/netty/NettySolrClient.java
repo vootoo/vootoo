@@ -34,9 +34,7 @@ import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.PackageInfo;
-import org.vootoo.client.netty.connect.ChannelPool;
-import org.vootoo.client.netty.connect.ChannelRefCounted;
-import org.vootoo.client.netty.connect.SimpleChannelPool;
+import org.vootoo.client.netty.connect.*;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ProtobufUtil;
 import org.vootoo.common.VootooException;
@@ -61,31 +59,20 @@ public class NettySolrClient extends SolrClient {
   // default timeout
   private int defaultTimeout = 2000;
 
-  private NettyClient nettyClient;
-
   private final String serverUrl;
-  private final String host;
-  private final int port;
 
-  private ChannelPool channelPool;
+  private ConnectionPool connectionPool;
 
   protected ModifiableSolrParams invariantParams;
   protected ResponseParser parser = new BinaryResponseParser();
   protected RequestWriter requestWriter = new BinaryRequestWriter();
 
   public NettySolrClient(String host, int port) {
-    this(host, port, NettyClient.DEFAULT);
+    this(new SimpleConnectionPool(NettyClient.DEFAULT.getBootstrap(), new InetSocketAddress(host, port)));
   }
-
-  public NettySolrClient(String host, int port, NettyClient nettyClient) {
-    this(host, port, nettyClient, new SimpleChannelPool(nettyClient.getBootstrap(), 1, new InetSocketAddress(host, port), 2000));
-  }
-  public NettySolrClient(String host, int port, NettyClient nettyClient, ChannelPool channelPool) {
-    this.host = host;
-    this.port = port;
-    this.nettyClient = nettyClient;
-    this.channelPool = channelPool;
-    serverUrl = "netty://"+host+":"+port;
+  public NettySolrClient(ConnectionPool connectionPool) {
+    this.connectionPool = connectionPool;
+    serverUrl = "netty://"+connectionPool.channelHost()+":"+connectionPool.channelPort();
   }
 
   protected ResponseParser createRequest(SolrRequest request, ProtobufRequestSetter saveRequestSetter) throws SolrServerException, IOException {
@@ -156,14 +143,8 @@ public class NettySolrClient extends SolrClient {
     //CommonParams.TIME_ALLOWED + 100ms
     int timeout = protobufRequestSetter.getTimeout() + 100;
 
-    ChannelRefCounted channelRef = null;
-
     Long rid = null;
     try {
-      channelRef = channelPool.getChannel(3);
-
-      final Channel channel = channelRef.get();
-
       ResponseCallback responseCallBack = new ResponseCallback();
       do {
         rid = NettyClient.createRid();
@@ -175,13 +156,20 @@ public class NettySolrClient extends SolrClient {
 
       protobufRequestSetter.setRid(rid);
 
+      Channel channel = null;
       //send netty request
       try {
+        channel = connectionPool.acquireConnect();
         // sync ?
         channel.writeAndFlush(protobufRequestSetter.buildProtocolRequest()).sync();
       } catch (InterruptedException e) {
         throw new IOException("channel.writeAndFlush throw InterruptedException, rid="+rid+", ["+serverUrl()+"] request=["+solrParams+"]");
+      } finally {
+        if(channel != null) {
+          connectionPool.releaseConnect(channel);
+        }
       }
+
       SolrProtocol.SolrResponse protocolResponse = null;
 
       try {
@@ -260,10 +248,7 @@ public class NettySolrClient extends SolrClient {
       return parser.processResponse(responseInputStream, charset);
     } finally {
       if(rid != null) {
-        NettyClient.responseCallbacks.remove(rid);
-      }
-      if(channelRef != null) {
-        channelRef.decref();
+        NettyClient.remove(rid);
       }
     }
   }
@@ -274,7 +259,7 @@ public class NettySolrClient extends SolrClient {
 
   @Override
   public void shutdown () {
-    channelPool.decref();
+    connectionPool.close();
   }
 
   public ModifiableSolrParams getInvariantParams() {

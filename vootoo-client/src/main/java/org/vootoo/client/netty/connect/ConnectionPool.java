@@ -17,19 +17,25 @@
 
 package org.vootoo.client.netty.connect;
 
-import java.net.ConnectException;
+import io.netty.channel.Channel;
+
+import java.io.Closeable;
 
 /**
+ * @author chenlb on 2015-06-12 11:44.
  */
-public class NettyConnectLessException extends ConnectException {
-  private static final long serialVersionUID = 1L;
+public interface ConnectionPool extends Closeable {
 
-  public NettyConnectLessException(String message) {
-    super(message);
-  }
+  String channelHost();
 
-  public NettyConnectLessException(String message, Throwable cause) {
-    this(message);
-    initCause(cause);
-  }
+  int channelPort();
+
+  void setConnectTimeout(int connectTimeout);
+
+  Channel acquireConnect() throws NettyConnectLessException;
+
+  void releaseConnect(Channel channel);
+
+  @Override
+  void close();
 }

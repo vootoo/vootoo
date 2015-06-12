@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * @deprecated instead of {@link ConnectionPool} that use {@link io.netty.channel.pool.ChannelPool}
  */
 public interface ChannelPool {
   /**
@@ -35,9 +36,9 @@ public interface ChannelPool {
 
   int channelPort();
 
-  long getConnectTimeout();
+  int getConnectTimeout();
 
-  void setConnectTimeout(long connectTimeout);
+  void setConnectTimeout(int connectTimeout);
 
   void decref();
 

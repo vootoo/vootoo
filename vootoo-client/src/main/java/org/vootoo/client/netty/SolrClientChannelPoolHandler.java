@@ -17,35 +17,40 @@
 
 package org.vootoo.client.netty;
 
-import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.pool.ChannelPoolHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.client.netty.connect.ChannelRefCounted;
-import org.vootoo.client.netty.connect.SimpleChannelPool;
+import org.vootoo.client.netty.connect.SimpleConnectionPool;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 
 /**
- * @author chenlb on 2015-05-29 08:55.
+ * @author chenlb on 2015-06-12 15:27.
  */
-public class LocalSimpleChannelPool extends SimpleChannelPool {
-  private static final Logger logger = LoggerFactory.getLogger(LocalSimpleChannelPool.class);
-  protected SocketAddress serverAddress;
+public class SolrClientChannelPoolHandler extends SolrClientChannelInitializer implements ChannelPoolHandler {
 
-  protected LocalSimpleChannelPool(Bootstrap bootstrap, int poolSize, SocketAddress serverAddress, int connectTimeout) {
-    super(bootstrap, poolSize, connectTimeout);
-    this.serverAddress = serverAddress;
+  private static final Logger logger = LoggerFactory.getLogger(SolrClientChannelPoolHandler.class);
+
+  private final SocketAddress socketAddress;
+
+  public SolrClientChannelPoolHandler(SocketAddress socketAddress) {
+    this.socketAddress = socketAddress;
   }
 
   @Override
-  protected SocketAddress getSocketAddress() {
-    return serverAddress;
+  public void channelReleased(Channel ch) throws Exception {
+    logger.debug("channel={} Released", ch);
   }
 
   @Override
-  protected ChannelRefCounted connectChannel(SocketAddress serverAddress, long connectTimeout) throws IOException {
-    logger.info("try_connect {} ...", serverAddress.toString());
-    return super.connectChannel(serverAddress, connectTimeout);
+  public void channelAcquired(Channel ch) throws Exception {
+    logger.debug("channel={} Acquired", ch);
+  }
+
+  @Override
+  public void channelCreated(Channel ch) throws Exception {
+    initChannel(ch);
+    logger.info("connect [{}] success channel={}", socketAddress, ch);
   }
 }

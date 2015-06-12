@@ -46,6 +46,7 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.client.netty.connect.SimpleConnectionPool;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ByteStringer;
 import org.vootoo.client.netty.util.ProtobufUtil;
@@ -255,9 +256,9 @@ public class NettySolrClientTest {
 
   protected NettySolrClient createNettysolrClient() {
     NettyClient nettyClient = new NettyClient(client);
-    LocalSimpleChannelPool channelPool = new LocalSimpleChannelPool(client, 1, addr, 3000);
-
-    NettySolrClient solrClient = new NettySolrClient("localhost", 8001, nettyClient, channelPool);
+    //LocalSimpleChannelPool channelPool = new LocalSimpleChannelPool(client, 1, addr, 3000);
+    SimpleConnectionPool connectionPool = new SimpleConnectionPool(client, addr);
+    NettySolrClient solrClient = new NettySolrClient(connectionPool);
     return solrClient;
   }
 
@@ -300,6 +301,7 @@ public class NettySolrClientTest {
       //System.out.println(query);
       assertIdResult(query, id);
     } catch (Exception e) {
+      e.printStackTrace();
       Assert.fail(e.getMessage());
     }
   }

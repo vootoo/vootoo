@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.NettyClient;
 
 /**
+ * @deprecated instead of {@link SimpleConnectionPool}
  */
 public class SimpleChannelPool implements ChannelPool {
   private static final Logger logger = LoggerFactory.getLogger(SimpleChannelPool.class);
@@ -41,16 +42,16 @@ public class SimpleChannelPool implements ChannelPool {
   protected ArrayList<ChannelRefCounted> pool;
 
   protected InetSocketAddress serverAddress;
-  protected long connectTimeout;
+  protected int connectTimeout;
 
-  protected SimpleChannelPool(Bootstrap bootstrap, int poolSize, long connectTimeout) {
+  protected SimpleChannelPool(Bootstrap bootstrap, int poolSize, int connectTimeout) {
     this.bootstrap = bootstrap;
     this.poolSize = poolSize;
     pool = new ArrayList<>(poolSize);
     this.connectTimeout = connectTimeout;
   }
 
-  public SimpleChannelPool(Bootstrap bootstrap, int poolSize, InetSocketAddress serverAddress, long connectTimeout) {
+  public SimpleChannelPool(Bootstrap bootstrap, int poolSize, InetSocketAddress serverAddress, int connectTimeout) {
     this(bootstrap, poolSize, connectTimeout);
 
     this.serverAddress = serverAddress;
@@ -114,12 +115,12 @@ public class SimpleChannelPool implements ChannelPool {
   }
 
   @Override
-  public long getConnectTimeout() {
+  public int getConnectTimeout() {
     return connectTimeout;
   }
 
   @Override
-  public void setConnectTimeout(long connectTimeout) {
+  public void setConnectTimeout(int connectTimeout) {
     this.connectTimeout = connectTimeout;
   }
 }
