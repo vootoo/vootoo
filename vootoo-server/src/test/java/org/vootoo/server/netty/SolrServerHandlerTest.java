@@ -40,6 +40,7 @@ import org.vootoo.client.netty.NettyClient;
 import org.vootoo.client.netty.NettySolrClient;
 import org.vootoo.client.netty.SolrClientChannelInitializer;
 import org.vootoo.client.netty.SolrClientHandler;
+import org.vootoo.client.netty.connect.SimpleConnectionPool;
 import org.vootoo.server.ExecutorConfig;
 import org.vootoo.server.RequestExecutor;
 import org.vootoo.server.RequestProcesserTest;
@@ -140,10 +141,8 @@ public class SolrServerHandlerTest extends RequestProcesserTest {
   }
 
   protected NettySolrClient createNettysolrClient() {
-    NettyClient nettyClient = new NettyClient(client);
-    LocalSimpleChannelPool channelPool = new LocalSimpleChannelPool(client, 1, addr, 3000);
-
-    NettySolrClient solrClient = new NettySolrClient("localhost", 8001, nettyClient, channelPool);
+    SimpleConnectionPool connectionPool = new SimpleConnectionPool(client, addr);
+    NettySolrClient solrClient = new NettySolrClient(connectionPool);
     return solrClient;
   }
 
