@@ -76,6 +76,10 @@ public class NettySolrClient extends SolrClient {
     this(new SimpleConnectionPool(NettyUtil.DEFAULT_BOOTSTRAP, new InetSocketAddress(host, port)));
   }
 
+  public NettySolrClient(String host, int port, HandlerConfig handlerConfig) {
+    this(new SimpleConnectionPool(NettyUtil.DEFAULT_BOOTSTRAP, handlerConfig, new InetSocketAddress(host, port)));
+  }
+
   public NettySolrClient(ConnectionPool connectionPool) {
     this.connectionPool = connectionPool;
     serverUrl = "netty://"+connectionPool.channelHost()+":"+connectionPool.channelPort();

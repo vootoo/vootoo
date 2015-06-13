@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ResponsePromiseContainer {
 
+  /** Global_Container */
+  public static final ResponsePromiseContainer GLOBAL_CONTAINER = new ResponsePromiseContainer();
+
   protected AtomicLong ridSeed = new AtomicLong(0);
   protected ConcurrentMap<Long, ResponsePromise> responsePromiseMaps = PlatformDependent.newConcurrentHashMap();
 

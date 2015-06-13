@@ -36,7 +36,6 @@ import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.NettySolrClient;
-import org.vootoo.client.netty.SolrClientChannelInitializer;
 import org.vootoo.client.netty.connect.SimpleConnectionPool;
 import org.vootoo.server.ExecutorConfig;
 import org.vootoo.server.RequestExecutor;
@@ -86,8 +85,7 @@ public class SolrServerHandlerTest extends RequestProcesserTest {
     client = new Bootstrap();
     client.group(clientGroup)
         .channel(LocalChannel.class)
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000)
-        .handler(new SolrClientChannelInitializer());
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
 
     // Start the server.
     ChannelFuture serverFuture = sb.bind(addr).sync();

@@ -25,9 +25,8 @@ import io.netty.channel.local.LocalAddress;
 import io.netty.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.client.netty.ResponsePromise;
-import org.vootoo.client.netty.ResponsePromiseContainer;
 import org.vootoo.client.netty.SolrClientChannelPoolHandler;
+import org.vootoo.client.netty.HandlerConfig;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -43,7 +42,6 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
   protected final SocketAddress socketAddress;
   protected final String host;
   protected final int port;
-  protected final SolrClientChannelPoolHandler channelPoolHandler;
 
   protected int connectTimeout; //default 2s
   protected ConnectionPoolContext poolContext;
@@ -52,20 +50,22 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
    * auto use {@link SolrClientChannelPoolHandler} for solr netty channel handler {@link org.vootoo.client.netty.SolrClientHandler}
    */
   public SimpleConnectionPool(Bootstrap bootstrap, SocketAddress remoteAddress) {
-    this(bootstrap, new SolrClientChannelPoolHandler(new ResponsePromiseContainer(), remoteAddress), remoteAddress, DEFAULT_CONNECT_TIMEOUT);
+    this(bootstrap, HandlerConfig.DEFAULT_CONFIG, remoteAddress, DEFAULT_CONNECT_TIMEOUT);
+  }
+  public SimpleConnectionPool(Bootstrap bootstrap, HandlerConfig handlerConfig, SocketAddress remoteAddress) {
+    this(bootstrap, handlerConfig, remoteAddress, DEFAULT_CONNECT_TIMEOUT);
   }
 
-  public SimpleConnectionPool(Bootstrap bootstrap, SolrClientChannelPoolHandler handler, SocketAddress socketAddress, int connectTimeout) {
-    super(bootstrap, handler);
-    this.channelPoolHandler = handler;
+  public SimpleConnectionPool(Bootstrap bootstrap, HandlerConfig handlerConfig, SocketAddress remoteAddress, int connectTimeout) {
+    super(bootstrap, new SolrClientChannelPoolHandler(handlerConfig, remoteAddress));
     this.connectTimeout = connectTimeout;
-    this.socketAddress = socketAddress;
-    if(socketAddress instanceof InetSocketAddress) {
-      InetSocketAddress inetSocketAddress = (InetSocketAddress)socketAddress;
+    this.socketAddress = remoteAddress;
+    if(remoteAddress instanceof InetSocketAddress) {
+      InetSocketAddress inetSocketAddress = (InetSocketAddress)remoteAddress;
       host = inetSocketAddress.getAddress().getHostAddress();
       port = inetSocketAddress.getPort();
-    } else if(socketAddress instanceof LocalAddress) {
-      LocalAddress localAddress = (LocalAddress) socketAddress;
+    } else if(remoteAddress instanceof LocalAddress) {
+      LocalAddress localAddress = (LocalAddress) remoteAddress;
       int myPort = -1;
       try {
         myPort = Integer.parseInt(localAddress.id());
@@ -77,7 +77,7 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
       throw new IllegalArgumentException("SocketAddress must be '"+InetSocketAddress.class.getName()+"' or '"+LocalAddress.class.getName()+"' (sub) class");
     }
 
-    poolContext = new ConnectionPoolContext(handler.getResponsePromiseContainer());
+    poolContext = new ConnectionPoolContext(handlerConfig.getResponsePromiseContainer());
   }
 
   @Override

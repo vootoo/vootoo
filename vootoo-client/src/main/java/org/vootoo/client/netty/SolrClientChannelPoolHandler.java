@@ -18,24 +18,31 @@
 package org.vootoo.client.netty;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.pool.ChannelPoolHandler;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.client.netty.connect.SimpleConnectionPool;
+import org.vootoo.client.netty.protocol.SolrProtocol;
 
 import java.net.SocketAddress;
 
 /**
  * @author chenlb on 2015-06-12 15:27.
  */
-public class SolrClientChannelPoolHandler extends SolrClientChannelInitializer implements ChannelPoolHandler {
-
+public class SolrClientChannelPoolHandler implements ChannelPoolHandler {
   private static final Logger logger = LoggerFactory.getLogger(SolrClientChannelPoolHandler.class);
 
-  private final SocketAddress socketAddress;
+  private static final int MB = 1024 * 1024;
 
-  public SolrClientChannelPoolHandler(ResponsePromiseContainer responsePromiseContainer, SocketAddress socketAddress) {
-    super(responsePromiseContainer);
+  protected final HandlerConfig handlerConfig;
+  protected final SocketAddress socketAddress;
+
+  public SolrClientChannelPoolHandler(HandlerConfig handlerConfig, SocketAddress socketAddress) {
+    this.handlerConfig = handlerConfig;
     this.socketAddress = socketAddress;
   }
 
@@ -53,5 +60,21 @@ public class SolrClientChannelPoolHandler extends SolrClientChannelInitializer i
   public void channelCreated(Channel ch) throws Exception {
     initChannel(ch);
     logger.info("connect [{}] success channel={}", socketAddress, ch);
+  }
+
+  protected void initChannel(Channel ch) throws Exception {
+    ChannelPipeline pipeline = ch.pipeline();
+
+    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(handlerConfig.getMaxFrameLengthMB() * MB, 0, 4, 0, 4));
+    pipeline.addLast("frame-encoder", new LengthFieldPrepender(4));
+
+    pipeline.addLast("pb-decoder", new ProtobufDecoder(SolrProtocol.SolrResponse.getDefaultInstance()));
+    pipeline.addLast("pb-encoder", new ProtobufEncoder());
+
+    pipeline.addLast(SolrClientHandler.CLIENT_HANDLER_NAME, new SolrClientHandler(getResponsePromiseContainer()));
+  }
+
+  public ResponsePromiseContainer getResponsePromiseContainer() {
+    return handlerConfig.getResponsePromiseContainer();
   }
 }

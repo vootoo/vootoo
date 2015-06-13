@@ -17,31 +17,29 @@
 
 package org.vootoo.client.netty;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vootoo.client.netty.protocol.SolrProtocol;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 /**
+ * @author chenlb on 2015-06-13 16:31.
  */
-public class ResponseCallback {
+public class HandlerConfig {
 
-  private final CountDownLatch finishLatch = new CountDownLatch(1);
-  private volatile SolrProtocol.SolrResponse solrResponse;
+  public static final HandlerConfig DEFAULT_CONFIG = new HandlerConfig(ResponsePromiseContainer.GLOBAL_CONTAINER);
 
-  public void applyResult(SolrProtocol.SolrResponse solrResponse) {
-    this.solrResponse = solrResponse;
-    finishLatch.countDown();
+  private ResponsePromiseContainer responsePromiseContainer;
+  private int maxFrameLengthMB = 200;
+
+  public HandlerConfig(ResponsePromiseContainer responsePromiseContainer) {
+    this.responsePromiseContainer = responsePromiseContainer;
   }
 
-  public SolrProtocol.SolrResponse awaitResult(long timeout) throws InterruptedException {
-    if(timeout > 0) {
-      finishLatch.await(timeout, TimeUnit.MILLISECONDS);
-    } else {
-      finishLatch.await();
-    }
-    return solrResponse;
+  public ResponsePromiseContainer getResponsePromiseContainer() {
+    return responsePromiseContainer;
+  }
+
+  public int getMaxFrameLengthMB() {
+    return maxFrameLengthMB;
+  }
+
+  public void setMaxFrameLengthMB(int maxFrameLengthMB) {
+    this.maxFrameLengthMB = maxFrameLengthMB;
   }
 }

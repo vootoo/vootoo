@@ -18,8 +18,6 @@
 package org.vootoo.client.netty.connect;
 
 import io.netty.channel.Channel;
-import org.vootoo.client.netty.ResponsePromise;
-import org.vootoo.client.netty.ResponsePromiseContainer;
 
 import java.io.Closeable;
 
