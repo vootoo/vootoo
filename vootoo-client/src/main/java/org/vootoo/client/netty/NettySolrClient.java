@@ -18,6 +18,9 @@
 package org.vootoo.client.netty;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.util.concurrent.Promise;
 import org.apache.solr.client.solrj.ResponseParser;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -34,7 +37,9 @@ import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.PackageInfo;
-import org.vootoo.client.netty.connect.*;
+import org.vootoo.client.netty.connect.ConnectionPool;
+import org.vootoo.client.netty.connect.ConnectionPoolContext;
+import org.vootoo.client.netty.connect.SimpleConnectionPool;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 import org.vootoo.client.netty.util.ProtobufUtil;
 import org.vootoo.common.VootooException;
@@ -68,8 +73,9 @@ public class NettySolrClient extends SolrClient {
   protected RequestWriter requestWriter = new BinaryRequestWriter();
 
   public NettySolrClient(String host, int port) {
-    this(new SimpleConnectionPool(NettyClient.DEFAULT.getBootstrap(), new InetSocketAddress(host, port)));
+    this(new SimpleConnectionPool(NettyUtil.DEFAULT_BOOTSTRAP, new InetSocketAddress(host, port)));
   }
+
   public NettySolrClient(ConnectionPool connectionPool) {
     this.connectionPool = connectionPool;
     serverUrl = "netty://"+connectionPool.channelHost()+":"+connectionPool.channelPort();
@@ -129,6 +135,17 @@ public class NettySolrClient extends SolrClient {
     throw new SolrServerException("Unsupported method: " + request.getMethod());
   }
 
+  protected VootooException createTimeoutException(long rid, int timeout, SolrParams solrParams) {
+    return createTimeoutException(rid, timeout, "", solrParams);
+  }
+
+  protected VootooException createTimeoutException(long rid, int timeout, String tip, SolrParams solrParams) {
+    VootooException vootooException = new VootooException(VootooException.VootooErrorCode.TIMEOUT,
+        "rid=" + rid + ", [" + serverUrl() + "] is timeout=" + timeout + ", "+tip+" request=[" + solrParams + "]");
+    vootooException.setRemoteServer(serverUrl());
+    return vootooException;
+  }
+
   @Override
   public NamedList<Object> request(SolrRequest request, String collection) throws SolrServerException, IOException {
     final ProtobufRequestSetter protobufRequestSetter = new ProtobufRequestSetter();
@@ -140,54 +157,46 @@ public class NettySolrClient extends SolrClient {
 
     final SolrParams solrParams = protobufRequestSetter.getSolrParams();
 
-    //CommonParams.TIME_ALLOWED + 100ms
-    int timeout = protobufRequestSetter.getTimeout() + 100;
+    //CommonParams.TIME_ALLOWED + 20ms
+    int timeout = protobufRequestSetter.getTimeout() + 20;
 
-    Long rid = null;
+    // create rid and ResponsePromise
+    ConnectionPoolContext poolContext = connectionPool.poolContext();
+    ResponsePromise responsePromise = poolContext.createResponsePromise();
+    Long rid = responsePromise.getRid();
+
+    SolrClientHandler solrClientHandler = null;
     try {
-      ResponseCallback responseCallBack = new ResponseCallback();
-      do {
-        rid = NettyClient.createRid();
-        ResponseCallback oldCallBack = NettyClient.putIfAbsent(rid, responseCallBack);
-        if(oldCallBack == null) {
-          break;
-        }
-      } while(true);
-
-      protobufRequestSetter.setRid(rid);
+      SolrProtocol.SolrRequest protocolRequest = protobufRequestSetter.setRid(rid).buildProtocolRequest();
 
       Channel channel = null;
+      ChannelFuture writeFuture = null;
       //send netty request
       try {
         channel = connectionPool.acquireConnect();
-        // sync ?
-        channel.writeAndFlush(protobufRequestSetter.buildProtocolRequest()).sync();
-      } catch (InterruptedException e) {
-        throw new IOException("channel.writeAndFlush throw InterruptedException, rid="+rid+", ["+serverUrl()+"] request=["+solrParams+"]");
+        solrClientHandler = SolrClientHandler.getSolrClientHandler(channel);
+        // send request
+        writeFuture = solrClientHandler.writeRequest(channel, protocolRequest, responsePromise);
       } finally {
         if(channel != null) {
           connectionPool.releaseConnect(channel);
         }
       }
 
-      SolrProtocol.SolrResponse protocolResponse = null;
-
-      try {
-        protocolResponse = responseCallBack.awaitResult(timeout);
-      } catch (InterruptedException e) {
-        logger.warn("await response interrupted, blank result instead of. rid="+protobufRequestSetter.getRid());
-        return new NamedList<>();
+      boolean writeDone = writeFuture.awaitUninterruptibly(timeout);
+      if(!writeDone) {
+        //write timeout
+        throw createTimeoutException(rid, timeout, "write request timeout", solrParams);
       }
 
+      SolrProtocol.SolrResponse protocolResponse = responsePromise.waitResult(timeout);
+
       if(protocolResponse == null) {
-        VootooException vootooException = new VootooException(VootooException.VootooErrorCode.TIMEOUT,
-            "rid=" + rid + ", [" + serverUrl() + "] is timeout=" + timeout + ", request=[" + solrParams + "]");
-        vootooException.setRemoteServer(serverUrl());
-        throw vootooException;
+        throw createTimeoutException(rid, timeout, solrParams);
       }
 
       if(logger.isDebugEnabled()) {
-        logger.debug("rid={}, response size={}", rid, protocolResponse.getSerializedSize());
+        logger.debug("rid={}, [{}] response size={}", rid, serverUrl(), protocolResponse.getSerializedSize());
       }
 
       // protocolResponse error
@@ -240,15 +249,15 @@ public class NettySolrClient extends SolrClient {
       if(responseInputStream == null) {
         // not response body
         logger.warn("rid={}, [{}] not response body, params={}", rid, serverUrl(), solrParams);
-        return new NamedList<>();
+        throw new SolrServerException("rid="+rid+", ["+serverUrl()+"] not response body, params="+solrParams);
       }
 
       String charset = ProtobufUtil.getResponseBodyCharset(protocolResponse);
 
       return parser.processResponse(responseInputStream, charset);
     } finally {
-      if(rid != null) {
-        NettyClient.remove(rid);
+      if(solrClientHandler != null) {
+        solrClientHandler.removeResponsePromise(rid);
       }
     }
   }

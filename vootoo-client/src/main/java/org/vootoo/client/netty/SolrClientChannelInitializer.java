@@ -30,7 +30,16 @@ import org.vootoo.client.netty.protocol.SolrProtocol;
  */
 public class SolrClientChannelInitializer extends ChannelInitializer<Channel> {
 
-  static int MB = 1024 * 1024;
+  private static int MB = 1024 * 1024;
+
+  protected final ResponsePromiseContainer responsePromiseContainer;
+
+  public SolrClientChannelInitializer(ResponsePromiseContainer responsePromiseContainer) {
+    if(responsePromiseContainer == null) {
+      throw new IllegalArgumentException("ResponsePromise maps can't be null!");
+    }
+    this.responsePromiseContainer = responsePromiseContainer;
+  }
 
   @Override
   protected void initChannel(Channel ch) throws Exception {
@@ -42,6 +51,10 @@ public class SolrClientChannelInitializer extends ChannelInitializer<Channel> {
     pipeline.addLast("pb-decoder", new ProtobufDecoder(SolrProtocol.SolrResponse.getDefaultInstance()));
     pipeline.addLast("pb-encoder", new ProtobufEncoder());
 
-    pipeline.addLast(new SolrClientHandler());
+    pipeline.addLast(SolrClientHandler.CLIENT_HANDLER_NAME, new SolrClientHandler(responsePromiseContainer));
+  }
+
+  public ResponsePromiseContainer getResponsePromiseContainer() {
+    return responsePromiseContainer;
   }
 }

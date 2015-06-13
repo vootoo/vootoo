@@ -23,6 +23,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Iterator;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
@@ -35,6 +39,16 @@ import com.google.protobuf.ByteString;
 /**
  */
 public class NettyUtil {
+
+  public static final Bootstrap DEFAULT_BOOTSTRAP;
+  static {
+    Bootstrap bootstrap = new Bootstrap();
+    bootstrap.group(new NioEventLoopGroup(10));
+    bootstrap.channel(NioSocketChannel.class);
+    bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
+
+    DEFAULT_BOOTSTRAP = bootstrap;
+  }
 
   /**
    * @param bs

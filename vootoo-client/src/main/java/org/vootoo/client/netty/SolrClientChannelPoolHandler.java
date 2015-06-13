@@ -34,7 +34,8 @@ public class SolrClientChannelPoolHandler extends SolrClientChannelInitializer i
 
   private final SocketAddress socketAddress;
 
-  public SolrClientChannelPoolHandler(SocketAddress socketAddress) {
+  public SolrClientChannelPoolHandler(ResponsePromiseContainer responsePromiseContainer, SocketAddress socketAddress) {
+    super(responsePromiseContainer);
     this.socketAddress = socketAddress;
   }
 

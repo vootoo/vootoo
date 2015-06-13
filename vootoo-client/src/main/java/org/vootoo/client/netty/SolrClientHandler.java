@@ -17,33 +17,72 @@
 
 package org.vootoo.client.netty;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 
+import io.netty.util.concurrent.Promise;
+import io.netty.util.internal.PlatformDependent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vootoo.client.netty.protocol.SolrProtocol;
 
+import java.net.SocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  */
 public class SolrClientHandler extends SimpleChannelInboundHandler<SolrProtocol.SolrResponse> {
-
   private static final Logger logger = LoggerFactory.getLogger(SolrClientHandler.class);
+
+  protected static final String CLIENT_HANDLER_NAME = "vootoo_solr_handler";
+
+  protected final ResponsePromiseContainer responsePromiseContainer;
+
+  public SolrClientHandler(ResponsePromiseContainer responsePromiseContainer) {
+    if(responsePromiseContainer == null) {
+      throw new IllegalArgumentException("ResponsePromise maps can't be null!");
+    }
+    this.responsePromiseContainer = responsePromiseContainer;
+  }
+
+  public static SolrClientHandler getSolrClientHandler(Channel channel) {
+    SolrClientHandler clientHandler = (SolrClientHandler) channel.pipeline().get(CLIENT_HANDLER_NAME);
+    assert clientHandler != null;
+    return clientHandler;
+  }
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, SolrProtocol.SolrResponse solrResponse) throws Exception {
-    ResponseCallback callback = NettyClient.remove(solrResponse.getRid());
-    if (callback != null) {
+    ResponsePromise responsePromise = responsePromiseContainer.removeResponsePromise(solrResponse.getRid());
+    if (responsePromise != null) {
       logger.debug("receive response={}", solrResponse);
-      callback.applyResult(solrResponse);
+      responsePromise.receiveResponse(solrResponse);
     } else {
-      logger.warn("miss rid='{}' at {} applyResult callback", solrResponse.getRid(), ctx.channel());
+      SocketAddress remoteAddress = ctx.channel().remoteAddress();
+      logger.warn("miss rid='{}' at {} receive response", solrResponse.getRid(), remoteAddress);
+      responsePromise.setFailure(new IllegalStateException("receive not registered response, rid="+solrResponse.getRid()+", server="+remoteAddress));
     }
+
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    logger.warn("Unexpected exception from downstream.", cause);
+    logger.warn("Unexpected exception from downstream. close channel="+ctx.channel(), cause);
     ctx.close();
+  }
+
+  private Promise<SolrProtocol.SolrResponse> newPromise(Channel channel) {
+    return channel.eventLoop().next().<SolrProtocol.SolrResponse>newPromise();
+  }
+
+  public ChannelFuture writeRequest(Channel channel, SolrProtocol.SolrRequest solrRequest, final ResponsePromise responsePromise) {
+    responsePromise.setResponsePromise(newPromise(channel));
+    ChannelFuture writeFuture = channel.writeAndFlush(solrRequest);
+    return writeFuture;
+  }
+
+  public void removeResponsePromise(long rid) {
+    responsePromiseContainer.removeResponsePromise(rid);
   }
 }

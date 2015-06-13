@@ -29,29 +29,21 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vootoo.client.netty.NettyClient;
 import org.vootoo.client.netty.NettySolrClient;
 import org.vootoo.client.netty.SolrClientChannelInitializer;
-import org.vootoo.client.netty.SolrClientHandler;
 import org.vootoo.client.netty.connect.SimpleConnectionPool;
 import org.vootoo.server.ExecutorConfig;
 import org.vootoo.server.RequestExecutor;
 import org.vootoo.server.RequestProcesserTest;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.*;
 
 /**
  * @author chenlb on 2015-05-28 17:23.

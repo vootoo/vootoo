@@ -25,6 +25,8 @@ import io.netty.channel.local.LocalAddress;
 import io.netty.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vootoo.client.netty.ResponsePromise;
+import org.vootoo.client.netty.ResponsePromiseContainer;
 import org.vootoo.client.netty.SolrClientChannelPoolHandler;
 
 import java.net.InetSocketAddress;
@@ -41,18 +43,21 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
   protected final SocketAddress socketAddress;
   protected final String host;
   protected final int port;
+  protected final SolrClientChannelPoolHandler channelPoolHandler;
 
   protected int connectTimeout; //default 2s
+  protected ConnectionPoolContext poolContext;
 
   /**
-   * auto use {@link SolrClientChannelPoolHandler} for solr netty channel
+   * auto use {@link SolrClientChannelPoolHandler} for solr netty channel handler {@link org.vootoo.client.netty.SolrClientHandler}
    */
   public SimpleConnectionPool(Bootstrap bootstrap, SocketAddress remoteAddress) {
-    this(bootstrap, new SolrClientChannelPoolHandler(remoteAddress), remoteAddress, DEFAULT_CONNECT_TIMEOUT);
+    this(bootstrap, new SolrClientChannelPoolHandler(new ResponsePromiseContainer(), remoteAddress), remoteAddress, DEFAULT_CONNECT_TIMEOUT);
   }
 
   public SimpleConnectionPool(Bootstrap bootstrap, SolrClientChannelPoolHandler handler, SocketAddress socketAddress, int connectTimeout) {
     super(bootstrap, handler);
+    this.channelPoolHandler = handler;
     this.connectTimeout = connectTimeout;
     this.socketAddress = socketAddress;
     if(socketAddress instanceof InetSocketAddress) {
@@ -71,6 +76,8 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
     } else {
       throw new IllegalArgumentException("SocketAddress must be '"+InetSocketAddress.class.getName()+"' or '"+LocalAddress.class.getName()+"' (sub) class");
     }
+
+    poolContext = new ConnectionPoolContext(handler.getResponsePromiseContainer());
   }
 
   @Override
@@ -117,6 +124,11 @@ public class SimpleConnectionPool extends io.netty.channel.pool.SimpleChannelPoo
     Future<Void> future = release(channel);
 
     //TODO  wait future done ?
+  }
+
+  @Override
+  public ConnectionPoolContext poolContext() {
+    return poolContext;
   }
 
   @Override

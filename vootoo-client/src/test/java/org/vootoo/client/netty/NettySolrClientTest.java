@@ -226,8 +226,7 @@ public class NettySolrClientTest {
     client = new Bootstrap();
     client.group(clientGroup)
         .channel(LocalChannel.class)
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000)
-        .handler(new SolrClientChannelInitializer());
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);
 
     // Start the server.
     ChannelFuture serverFuture = sb.bind(addr).sync();
@@ -255,7 +254,6 @@ public class NettySolrClientTest {
   }
 
   protected NettySolrClient createNettysolrClient() {
-    NettyClient nettyClient = new NettyClient(client);
     //LocalSimpleChannelPool channelPool = new LocalSimpleChannelPool(client, 1, addr, 3000);
     SimpleConnectionPool connectionPool = new SimpleConnectionPool(client, addr);
     NettySolrClient solrClient = new NettySolrClient(connectionPool);

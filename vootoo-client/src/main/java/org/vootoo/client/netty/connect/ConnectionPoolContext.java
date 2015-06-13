@@ -17,30 +17,29 @@
 
 package org.vootoo.client.netty.connect;
 
-import io.netty.channel.Channel;
 import org.vootoo.client.netty.ResponsePromise;
 import org.vootoo.client.netty.ResponsePromiseContainer;
 
-import java.io.Closeable;
-
 /**
- * @author chenlb on 2015-06-12 11:44.
+ * @author chenlb on 2015-06-13 15:11.
  */
-public interface ConnectionPool extends Closeable {
+public class ConnectionPoolContext {
 
-  String channelHost();
+  private ResponsePromiseContainer responsePromiseContainer;
 
-  int channelPort();
+  public ConnectionPoolContext(ResponsePromiseContainer responsePromiseContainer) {
+    this.responsePromiseContainer = responsePromiseContainer;
+  }
 
-  void setConnectTimeout(int connectTimeout);
+  public ResponsePromise createResponsePromise() {
+    return responsePromiseContainer.createResponsePromise();
+  }
 
-  Channel acquireConnect() throws NettyConnectLessException;
+  public ResponsePromiseContainer getResponsePromiseContainer() {
+    return responsePromiseContainer;
+  }
 
-  void releaseConnect(Channel channel);
-
-  ConnectionPoolContext poolContext();
-
-  @Override
-  void close();
-
+  public void setResponsePromiseContainer(ResponsePromiseContainer responsePromiseContainer) {
+    this.responsePromiseContainer = responsePromiseContainer;
+  }
 }
