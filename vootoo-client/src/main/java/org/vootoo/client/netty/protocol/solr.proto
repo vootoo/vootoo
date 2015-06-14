@@ -39,7 +39,7 @@ message KeyValue {
 
 message ExceptionBody {
 	required int32 code = 1;
-	repeated string message = 2;
+	optional string message = 2;
 	repeated KeyValue metadata = 3;
 	optional string trace = 4;
 }

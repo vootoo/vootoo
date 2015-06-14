@@ -4627,25 +4627,20 @@ public final class SolrProtocol {
      */
     int getCode();
 
-    // repeated string message = 2;
+    // optional string message = 2;
     /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
-    java.util.List<java.lang.String>
-    getMessageList();
+    boolean hasMessage();
     /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
-    int getMessageCount();
+    java.lang.String getMessage();
     /**
-     * <code>repeated string message = 2;</code>
-     */
-    java.lang.String getMessage(int index);
-    /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
     com.google.protobuf.ByteString
-        getMessageBytes(int index);
+        getMessageBytes();
 
     // repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;
     /**
@@ -4744,11 +4739,8 @@ public final class SolrProtocol {
               break;
             }
             case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                message_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              message_.add(input.readBytes());
+              bitField0_ |= 0x00000002;
+              message_ = input.readBytes();
               break;
             }
             case 26: {
@@ -4760,7 +4752,7 @@ public final class SolrProtocol {
               break;
             }
             case 34: {
-              bitField0_ |= 0x00000002;
+              bitField0_ |= 0x00000004;
               trace_ = input.readBytes();
               break;
             }
@@ -4772,9 +4764,6 @@ public final class SolrProtocol {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          message_ = new com.google.protobuf.UnmodifiableLazyStringList(message_);
-        }
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           metadata_ = java.util.Collections.unmodifiableList(metadata_);
         }
@@ -4826,34 +4815,47 @@ public final class SolrProtocol {
       return code_;
     }
 
-    // repeated string message = 2;
+    // optional string message = 2;
     public static final int MESSAGE_FIELD_NUMBER = 2;
-    private com.google.protobuf.LazyStringList message_;
+    private java.lang.Object message_;
     /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
-    public java.util.List<java.lang.String>
-        getMessageList() {
-      return message_;
+    public boolean hasMessage() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
-    public int getMessageCount() {
-      return message_.size();
+    public java.lang.String getMessage() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          message_ = s;
+        }
+        return s;
+      }
     }
     /**
-     * <code>repeated string message = 2;</code>
-     */
-    public java.lang.String getMessage(int index) {
-      return message_.get(index);
-    }
-    /**
-     * <code>repeated string message = 2;</code>
+     * <code>optional string message = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getMessageBytes(int index) {
-      return message_.getByteString(index);
+        getMessageBytes() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        message_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     // repeated .org.vootoo.client.netty.protocol.KeyValue metadata = 3;
@@ -4899,7 +4901,7 @@ public final class SolrProtocol {
      * <code>optional string trace = 4;</code>
      */
     public boolean hasTrace() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>optional string trace = 4;</code>
@@ -4937,7 +4939,7 @@ public final class SolrProtocol {
 
     private void initFields() {
       code_ = 0;
-      message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      message_ = "";
       metadata_ = java.util.Collections.emptyList();
       trace_ = "";
     }
@@ -4966,13 +4968,13 @@ public final class SolrProtocol {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, code_);
       }
-      for (int i = 0; i < message_.size(); i++) {
-        output.writeBytes(2, message_.getByteString(i));
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getMessageBytes());
       }
       for (int i = 0; i < metadata_.size(); i++) {
         output.writeMessage(3, metadata_.get(i));
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(4, getTraceBytes());
       }
       getUnknownFields().writeTo(output);
@@ -4988,20 +4990,15 @@ public final class SolrProtocol {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, code_);
       }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < message_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(message_.getByteString(i));
-        }
-        size += dataSize;
-        size += 1 * getMessageList().size();
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getMessageBytes());
       }
       for (int i = 0; i < metadata_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, metadata_.get(i));
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(4, getTraceBytes());
       }
@@ -5124,7 +5121,7 @@ public final class SolrProtocol {
         super.clear();
         code_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        message_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
         if (metadataBuilder_ == null) {
           metadata_ = java.util.Collections.emptyList();
@@ -5166,10 +5163,8 @@ public final class SolrProtocol {
           to_bitField0_ |= 0x00000001;
         }
         result.code_ = code_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          message_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              message_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
         }
         result.message_ = message_;
         if (metadataBuilder_ == null) {
@@ -5182,7 +5177,7 @@ public final class SolrProtocol {
           result.metadata_ = metadataBuilder_.build();
         }
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000002;
+          to_bitField0_ |= 0x00000004;
         }
         result.trace_ = trace_;
         result.bitField0_ = to_bitField0_;
@@ -5204,14 +5199,9 @@ public final class SolrProtocol {
         if (other.hasCode()) {
           setCode(other.getCode());
         }
-        if (!other.message_.isEmpty()) {
-          if (message_.isEmpty()) {
-            message_ = other.message_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-          } else {
-            ensureMessageIsMutable();
-            message_.addAll(other.message_);
-          }
+        if (other.hasMessage()) {
+          bitField0_ |= 0x00000002;
+          message_ = other.message_;
           onChanged();
         }
         if (metadataBuilder_ == null) {
@@ -5315,95 +5305,76 @@ public final class SolrProtocol {
         return this;
       }
 
-      // repeated string message = 2;
-      private com.google.protobuf.LazyStringList message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureMessageIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          message_ = new com.google.protobuf.LazyStringArrayList(message_);
-          bitField0_ |= 0x00000002;
-         }
-      }
+      // optional string message = 2;
+      private java.lang.Object message_ = "";
       /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
-      public java.util.List<java.lang.String>
-          getMessageList() {
-        return java.util.Collections.unmodifiableList(message_);
+      public boolean hasMessage() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
-      public int getMessageCount() {
-        return message_.size();
+      public java.lang.String getMessage() {
+        java.lang.Object ref = message_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          message_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>repeated string message = 2;</code>
-       */
-      public java.lang.String getMessage(int index) {
-        return message_.get(index);
-      }
-      /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
       public com.google.protobuf.ByteString
-          getMessageBytes(int index) {
-        return message_.getByteString(index);
+          getMessageBytes() {
+        java.lang.Object ref = message_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          message_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
       /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
       public Builder setMessage(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureMessageIsMutable();
-        message_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string message = 2;</code>
-       */
-      public Builder addMessage(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureMessageIsMutable();
-        message_.add(value);
+  bitField0_ |= 0x00000002;
+        message_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string message = 2;</code>
-       */
-      public Builder addAllMessage(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureMessageIsMutable();
-        super.addAll(values, message_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
       public Builder clearMessage() {
-        message_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
+        message_ = getDefaultInstance().getMessage();
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string message = 2;</code>
+       * <code>optional string message = 2;</code>
        */
-      public Builder addMessageBytes(
+      public Builder setMessageBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureMessageIsMutable();
-        message_.add(value);
+  bitField0_ |= 0x00000002;
+        message_ = value;
         onChanged();
         return this;
       }
@@ -6884,7 +6855,7 @@ public final class SolrProtocol {
       ".protocol.ContentStream\"1\n\014ResponseBody\022" +
       "\023\n\013contentType\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"&\n\010Ke" +
       "yValue\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"{\n\rEx" +
-      "ceptionBody\022\014\n\004code\030\001 \002(\005\022\017\n\007message\030\002 \003" +
+      "ceptionBody\022\014\n\004code\030\001 \002(\005\022\017\n\007message\030\002 \001" +
       "(\t\022<\n\010metadata\030\003 \003(\0132*.org.vootoo.client" +
       ".netty.protocol.KeyValue\022\r\n\005trace\030\004 \001(\t\"" +
       "\251\001\n\014SolrResponse\022\013\n\003rid\030\001 \002(\003\022D\n\014respons" +

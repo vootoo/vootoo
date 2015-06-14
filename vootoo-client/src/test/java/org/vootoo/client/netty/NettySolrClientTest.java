@@ -110,11 +110,9 @@ public class NettySolrClientTest {
         SolrProtocol.ExceptionBody.Builder exceptionBody = SolrProtocol.ExceptionBody.newBuilder();
         exceptionBody.setCode(errorCode);
 
-        String[] msgs = solrParams.getParams(RequestParams.ErrorMsg);
-        if(msgs != null) {
-          for(String msg : msgs) {
-            exceptionBody.addMessage(msg);
-          }
+        String msg = solrParams.get(RequestParams.ErrorMsg);
+        if(msg != null) {
+          exceptionBody.setMessage(msg);
         }
 
         String[] metas = solrParams.getParams(RequestParams.ErrorMeta);

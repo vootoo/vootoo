@@ -185,7 +185,7 @@ public class ProtobufUtil {
     for (Throwable th = ex; th != null; th = th.getCause()) {
       String msg = th.getMessage();
       if (msg != null) {
-        exceptionBody.addMessage(msg);
+        exceptionBody.setMessage(msg);
         break;
       }
     }
@@ -208,14 +208,14 @@ public class ProtobufUtil {
    * @return SolrException or VootooException
    */
   public static VootooException toVootooException(SolrProtocol.ExceptionBody exceptionBody) {
-    String msg = Joiner.on('\n').join(exceptionBody.getMessageList());
+    String msg = exceptionBody.getMessage();
     VootooException.VootooErrorCode vec = VootooException.VootooErrorCode.getErrorCode(exceptionBody.getCode());
     VootooException ve = new VootooException(vec, msg);
     if(vec == VootooException.VootooErrorCode.UNKNOWN) {
       ve.setUnknownCode(exceptionBody.getCode());
     }
 
-    if(exceptionBody.getMessageCount() > 0) {
+    if(exceptionBody.getMetadataCount() > 0) {
       NamedList<String> metadata = toSolrExceptionMetadata(exceptionBody.getMetadataList());
       ve.setMetadata(metadata);
     }

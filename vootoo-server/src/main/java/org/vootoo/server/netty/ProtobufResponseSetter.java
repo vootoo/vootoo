@@ -82,9 +82,9 @@ public class ProtobufResponseSetter implements ResponseSetter<SolrProtocol.SolrR
 
     ProtobufUtil.fillErrorMetadata(exceptionBody, (NamedList<String>) info.get("metadata"));
 
-    List<String> msgs = info.getAll("msg");
-    if(msgs != null) {
-      exceptionBody.addAllMessage(msgs);
+    Object msg = info.get("msg");
+    if(msg != null) {
+      exceptionBody.setMessage(String.valueOf(msg));
     }
 
     String trace = (String)info.get("trace");
@@ -99,7 +99,7 @@ public class ProtobufResponseSetter implements ResponseSetter<SolrProtocol.SolrR
   public void addError(int code, String message) {
     SolrProtocol.ExceptionBody.Builder exceptionBody = SolrProtocol.ExceptionBody.newBuilder();
     exceptionBody.setCode(code);
-    exceptionBody.addMessage(message);
+    exceptionBody.setMessage(message);
 
     protocolResponseBuilder.addExceptionBody(exceptionBody);
   }
