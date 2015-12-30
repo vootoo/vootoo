@@ -121,6 +121,10 @@ public class NettySolrClient extends SolrClient {
     saveRequestSetter.setPath(path);
     saveRequestSetter.setSolrParams(wparams);
 
+    if(request.getMethod() != null) {
+      saveRequestSetter.setMethod(request.getMethod());
+    }
+
     if (SolrRequest.METHOD.GET == request.getMethod()) {
       if (streams != null) {
         throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "GET can't send streams!");

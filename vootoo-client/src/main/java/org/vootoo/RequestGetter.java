@@ -36,4 +36,6 @@ public interface RequestGetter {
   String getPath();
 
   int requestSize();
+
+  String getMethod();
 }

@@ -21,11 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.solr.cloud.CloudDescriptor;
 import org.apache.solr.common.cloud.*;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.core.CoreContainer;
-import org.apache.solr.core.RequestHandlers;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.logging.MDCUtils;
 import org.apache.solr.request.SolrQueryRequest;
@@ -125,85 +122,6 @@ public class Vootoo {
         solrReq.setParams(params);
       }
     }
-  }
-
-  public static String getRemotCoreUrl(CoreContainer cores, String collectionName, String origCorename) {
-    ClusterState clusterState = cores.getZkController().getClusterState();
-    Collection<Slice> slices = clusterState.getActiveSlices(collectionName);
-    boolean byCoreName = false;
-
-    if (slices == null) {
-      slices = new ArrayList<>();
-      // look by core name
-      byCoreName = true;
-      slices = getSlicesForCollections(clusterState, slices, true);
-      if (slices == null || slices.size() == 0) {
-        slices = getSlicesForCollections(clusterState, slices, false);
-      }
-    }
-
-    if (slices == null || slices.size() == 0) {
-      return null;
-    }
-
-    String coreUrl = getCoreUrl(cores, collectionName, origCorename, clusterState,
-        slices, byCoreName, true);
-
-    if (coreUrl == null) {
-      coreUrl = getCoreUrl(cores, collectionName, origCorename, clusterState,
-          slices, byCoreName, false);
-    }
-
-    return coreUrl;
-  }
-
-  public static String getCoreUrl(CoreContainer cores, String collectionName,
-      String origCorename, ClusterState clusterState, Collection<Slice> slices,
-      boolean byCoreName, boolean activeReplicas) {
-    String coreUrl;
-    Set<String> liveNodes = clusterState.getLiveNodes();
-    for (Slice slice : slices) {
-      Map<String,Replica> sliceShards = slice.getReplicasMap();
-      for (ZkNodeProps nodeProps : sliceShards.values()) {
-        ZkCoreNodeProps coreNodeProps = new ZkCoreNodeProps(nodeProps);
-        if (!activeReplicas || (liveNodes.contains(coreNodeProps.getNodeName())
-            && coreNodeProps.getState().equals(ZkStateReader.ACTIVE))) {
-
-          if (byCoreName && !collectionName.equals(coreNodeProps.getCoreName())) {
-            // if it's by core name, make sure they match
-            continue;
-          }
-          if (coreNodeProps.getBaseUrl().equals(cores.getZkController().getBaseUrl())) {
-            // don't count a local core
-            continue;
-          }
-
-          if (origCorename != null) {
-            coreUrl = coreNodeProps.getBaseUrl() + "/" + origCorename;
-          } else {
-            coreUrl = coreNodeProps.getCoreUrl();
-            if (coreUrl.endsWith("/")) {
-              coreUrl = coreUrl.substring(0, coreUrl.length() - 1);
-            }
-          }
-
-          return coreUrl;
-        }
-      }
-    }
-    return null;
-  }
-
-  public static Collection<Slice> getSlicesForCollections(ClusterState clusterState, Collection<Slice> slices, boolean activeSlices) {
-    Set<String> collections = clusterState.getCollections();
-    for (String collection : collections) {
-      if (activeSlices) {
-        slices.addAll(clusterState.getActiveSlices(collection));
-      } else {
-        slices.addAll(clusterState.getSlices(collection));
-      }
-    }
-    return slices;
   }
 
   public static SolrCore getCoreByCollection(CoreContainer cores, String corename) {

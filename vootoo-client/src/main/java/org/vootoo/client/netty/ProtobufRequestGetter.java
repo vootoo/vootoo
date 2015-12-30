@@ -90,4 +90,9 @@ public class ProtobufRequestGetter implements RequestGetter {
   public int requestSize() {
     return protocolSolrRequest.getSerializedSize();
   }
+
+  @Override
+  public String getMethod() {
+    return protocolSolrRequest.getMethod();
+  }
 }
