@@ -175,6 +175,7 @@ public class NettySolrClientTest {
 
         responseHeader.add("status",0);
         responseHeader.add("QTime",10);
+        responseHeader.add("METHOD", requestGetter.getMethod());
 
         MemoryOutputStream responeOutput = new MemoryOutputStream();
         writeResponse(values, responeOutput);
@@ -295,6 +296,7 @@ public class NettySolrClientTest {
     try {
       QueryResponse query = solrClient.query(solrQuery);
       //System.out.println(query);
+      Assert.assertEquals("GET", query.getResponseHeader().get("METHOD"));
       assertIdResult(query, id);
     } catch (Exception e) {
       e.printStackTrace();

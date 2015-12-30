@@ -87,6 +87,11 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     public int requestSize() {
       return 10;
     }
+
+    @Override
+    public String getMethod() {
+      return "GET";
+    }
   }
 
   private static class UpdateRequestGetter implements RequestGetter {
@@ -128,6 +133,11 @@ public class RequestProcesserTest extends SolrTestCaseJ4 {
     @Override
     public int requestSize() {
       return 10;
+    }
+
+    @Override
+    public String getMethod() {
+      return "POST";
     }
   }
 

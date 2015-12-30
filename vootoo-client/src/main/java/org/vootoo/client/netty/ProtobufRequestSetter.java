@@ -38,6 +38,7 @@ public class ProtobufRequestSetter {
 
   private SolrParams solrParams;
   private int timeout;
+  private SolrRequest.METHOD method = SolrRequest.METHOD.GET;
 
   public ProtobufRequestSetter setCollection(String collection) {
     solrRequestBuilder.setCollection(collection);
@@ -65,6 +66,12 @@ public class ProtobufRequestSetter {
     return this;
   }
 
+  public ProtobufRequestSetter setMethod(SolrRequest.METHOD method) {
+    this.method = method;
+    solrRequestBuilder.setMethod(this.method.name());
+    return this;
+  }
+
   public SolrProtocol.SolrRequest buildProtocolRequest() {
     return solrRequestBuilder.build();
   }
@@ -84,4 +91,5 @@ public class ProtobufRequestSetter {
   public void setTimeout(int timeout) {
     this.timeout = timeout;
   }
+
 }

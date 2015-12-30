@@ -1836,6 +1836,21 @@ public final class SolrProtocol {
      */
     org.vootoo.client.netty.protocol.SolrProtocol.ContentStreamOrBuilder getContentStreamOrBuilder(
         int index);
+
+    // optional string method = 6;
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    boolean hasMethod();
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    java.lang.String getMethod();
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    com.google.protobuf.ByteString
+        getMethodBytes();
   }
   /**
    * Protobuf type {@code org.vootoo.client.netty.protocol.SolrRequest}
@@ -1917,6 +1932,11 @@ public final class SolrProtocol {
                 mutable_bitField0_ |= 0x00000010;
               }
               contentStream_.add(input.readMessage(org.vootoo.client.netty.protocol.SolrProtocol.ContentStream.PARSER, extensionRegistry));
+              break;
+            }
+            case 50: {
+              bitField0_ |= 0x00000008;
+              method_ = input.readBytes();
               break;
             }
           }
@@ -2179,12 +2199,56 @@ public final class SolrProtocol {
       return contentStream_.get(index);
     }
 
+    // optional string method = 6;
+    public static final int METHOD_FIELD_NUMBER = 6;
+    private java.lang.Object method_;
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    public boolean hasMethod() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    public java.lang.String getMethod() {
+      java.lang.Object ref = method_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          method_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string method = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMethodBytes() {
+      java.lang.Object ref = method_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        method_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       rid_ = 0L;
       collection_ = "";
       path_ = "";
       param_ = java.util.Collections.emptyList();
       contentStream_ = java.util.Collections.emptyList();
+      method_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2233,6 +2297,9 @@ public final class SolrProtocol {
       for (int i = 0; i < contentStream_.size(); i++) {
         output.writeMessage(5, contentStream_.get(i));
       }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBytes(6, getMethodBytes());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2261,6 +2328,10 @@ public final class SolrProtocol {
       for (int i = 0; i < contentStream_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, contentStream_.get(i));
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(6, getMethodBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2398,6 +2469,8 @@ public final class SolrProtocol {
         } else {
           contentStreamBuilder_.clear();
         }
+        method_ = "";
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -2456,6 +2529,10 @@ public final class SolrProtocol {
         } else {
           result.contentStream_ = contentStreamBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.method_ = method_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2536,6 +2613,11 @@ public final class SolrProtocol {
               contentStreamBuilder_.addAllMessages(other.contentStream_);
             }
           }
+        }
+        if (other.hasMethod()) {
+          bitField0_ |= 0x00000020;
+          method_ = other.method_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -3387,6 +3469,80 @@ public final class SolrProtocol {
           contentStream_ = null;
         }
         return contentStreamBuilder_;
+      }
+
+      // optional string method = 6;
+      private java.lang.Object method_ = "";
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public boolean hasMethod() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public java.lang.String getMethod() {
+        java.lang.Object ref = method_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          method_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMethodBytes() {
+        java.lang.Object ref = method_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          method_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public Builder setMethod(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000020;
+        method_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public Builder clearMethod() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        method_ = getDefaultInstance().getMethod();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string method = 6;</code>
+       */
+      public Builder setMethodBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000020;
+        method_ = value;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:org.vootoo.client.netty.protocol.SolrRequest)
@@ -6847,23 +7003,23 @@ public final class SolrProtocol {
       "etty.protocol\"#\n\005Param\022\013\n\003key\030\001 \002(\t\022\r\n\005v" +
       "alue\030\002 \003(\t\"d\n\rContentStream\022\014\n\004name\030\001 \001(" +
       "\t\022\022\n\nsourceInfo\030\002 \001(\t\022\023\n\013contentType\030\003 \001" +
-      "(\t\022\014\n\004size\030\004 \002(\003\022\016\n\006stream\030\005 \002(\014\"\274\001\n\013Sol" +
+      "(\t\022\014\n\004size\030\004 \002(\003\022\016\n\006stream\030\005 \002(\014\"\314\001\n\013Sol" +
       "rRequest\022\013\n\003rid\030\001 \002(\003\022\022\n\ncollection\030\002 \001(" +
       "\t\022\014\n\004path\030\003 \002(\t\0226\n\005param\030\004 \003(\0132\'.org.voo" +
       "too.client.netty.protocol.Param\022F\n\rconte" +
       "ntStream\030\005 \003(\0132/.org.vootoo.client.netty",
-      ".protocol.ContentStream\"1\n\014ResponseBody\022" +
-      "\023\n\013contentType\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"&\n\010Ke" +
-      "yValue\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"{\n\rEx" +
-      "ceptionBody\022\014\n\004code\030\001 \002(\005\022\017\n\007message\030\002 \001" +
-      "(\t\022<\n\010metadata\030\003 \003(\0132*.org.vootoo.client" +
-      ".netty.protocol.KeyValue\022\r\n\005trace\030\004 \001(\t\"" +
-      "\251\001\n\014SolrResponse\022\013\n\003rid\030\001 \002(\003\022D\n\014respons" +
-      "eBody\030\002 \001(\0132..org.vootoo.client.netty.pr" +
-      "otocol.ResponseBody\022F\n\rexceptionBody\030\003 \003" +
-      "(\0132/.org.vootoo.client.netty.protocol.Ex",
-      "ceptionBodyB2\n org.vootoo.client.netty.p" +
-      "rotocolB\014SolrProtocolH\001"
+      ".protocol.ContentStream\022\016\n\006method\030\006 \001(\t\"" +
+      "1\n\014ResponseBody\022\023\n\013contentType\030\001 \002(\t\022\014\n\004" +
+      "body\030\002 \002(\014\"&\n\010KeyValue\022\013\n\003key\030\001 \002(\t\022\r\n\005v" +
+      "alue\030\002 \002(\t\"{\n\rExceptionBody\022\014\n\004code\030\001 \002(" +
+      "\005\022\017\n\007message\030\002 \001(\t\022<\n\010metadata\030\003 \003(\0132*.o" +
+      "rg.vootoo.client.netty.protocol.KeyValue" +
+      "\022\r\n\005trace\030\004 \001(\t\"\251\001\n\014SolrResponse\022\013\n\003rid\030" +
+      "\001 \002(\003\022D\n\014responseBody\030\002 \001(\0132..org.vootoo" +
+      ".client.netty.protocol.ResponseBody\022F\n\re" +
+      "xceptionBody\030\003 \003(\0132/.org.vootoo.client.n",
+      "etty.protocol.ExceptionBodyB2\n org.vooto" +
+      "o.client.netty.protocolB\014SolrProtocolH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -6887,7 +7043,7 @@ public final class SolrProtocol {
           internal_static_org_vootoo_client_netty_protocol_SolrRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_vootoo_client_netty_protocol_SolrRequest_descriptor,
-              new java.lang.String[] { "Rid", "Collection", "Path", "Param", "ContentStream", });
+              new java.lang.String[] { "Rid", "Collection", "Path", "Param", "ContentStream", "Method", });
           internal_static_org_vootoo_client_netty_protocol_ResponseBody_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_org_vootoo_client_netty_protocol_ResponseBody_fieldAccessorTable = new
