@@ -24,7 +24,7 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.core.CoreContainer;
 import org.apache.solr.core.SolrCore;
-import org.apache.solr.logging.MDCUtils;
+import org.apache.solr.logging.MDCLoggingContext;
 import org.apache.solr.request.SolrQueryRequest;
 
 import java.util.*;
@@ -59,16 +59,6 @@ public class Vootoo {
       mySuffix = "request."+suffix;
     }
     return Vootoo.class.getPackage().getName()+"."+mySuffix;
-  }
-
-  public static void addMDCValues(CoreContainer cores, SolrCore core) {
-    MDCUtils.setCore(core.getName());
-    if (cores.isZooKeeperAware()) {
-      CloudDescriptor cloud = core.getCoreDescriptor().getCloudDescriptor();
-      MDCUtils.setCollection(cloud.getCollectionName());
-      MDCUtils.setShard(cloud.getShardId());
-      MDCUtils.setReplica(cloud.getCoreNodeName());
-    }
   }
 
   public static Map<String , Integer> checkStateIsValid(CoreContainer cores, String stateVer) {

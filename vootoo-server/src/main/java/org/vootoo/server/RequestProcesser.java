@@ -33,7 +33,7 @@ import org.apache.solr.core.RequestHandlers;
 import org.apache.solr.core.SolrConfig;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.ContentStreamHandlerBase;
-import org.apache.solr.logging.MDCUtils;
+import org.apache.solr.logging.MDCLoggingContext;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.request.SolrRequestInfo;
@@ -84,7 +84,8 @@ public class RequestProcesser {
   }
 
   public void handleRequest(RequestGetter requestGetter) {
-    MDCUtils.clearMDC();
+    MDCLoggingContext.reset();
+    MDCLoggingContext.setNode(cores);
 
     String path = requestGetter.getPath();
     solrParams = requestGetter.getSolrParams();
@@ -145,7 +146,6 @@ public class RequestProcesser {
 
           if (core != null) {
             path = path.substring( idx );
-            addMDCValues(cores, core);
           }
         }
 
@@ -153,17 +153,11 @@ public class RequestProcesser {
         if(core == null && StringUtils.isNotBlank(requestGetter.getCollection())) {
           corename = requestGetter.getCollection();
           core = cores.getCore(corename);
-          if(core != null) {
-            addMDCValues(cores, core);
-          }
         }
 
         if (core == null) {
           if (!cores.isZooKeeperAware() ) {
             core = cores.getCore("");
-            if (core != null) {
-              addMDCValues(cores, core);
-            }
           }
         }
       }
@@ -175,20 +169,19 @@ public class RequestProcesser {
         if (core != null) {
           // we found a core, update the path
           path = path.substring( idx );
-          addMDCValues(cores, core);
         }
 
         // try the default core
         if (core == null) {
           core = cores.getCore("");
           if (core != null) {
-            addMDCValues(cores, core);
           }
         }
       }
 
       // With a valid core...
       if( core != null ) {
+        MDCLoggingContext.setCore(core);
         final SolrConfig config = core.getSolrConfig();
         // get or create/cache the parser for the core
         SolrRequestParsers parser = config.getRequestParsers();
@@ -279,6 +272,7 @@ public class RequestProcesser {
         } finally {
           SolrRequestInfo.clearRequestInfo();
         }
+        MDCLoggingContext.clear();
       }
     }
   }

@@ -22,13 +22,14 @@ import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.util.RTimer;
+import org.apache.solr.util.RTimerTree;
 
 /**
  * @author chenlb on 2015-05-25 11:34.
  */
 public class VootooQueryRequest extends SolrQueryRequestBase {
 
-  public VootooQueryRequest(SolrCore core, SolrParams params, RTimer requestTimer) {
+  public VootooQueryRequest(SolrCore core, SolrParams params, RTimerTree requestTimer) {
     super(core, params, requestTimer);
   }
 }

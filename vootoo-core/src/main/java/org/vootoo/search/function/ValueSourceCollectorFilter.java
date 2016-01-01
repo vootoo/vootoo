@@ -68,7 +68,7 @@ public class ValueSourceCollectorFilter extends SolrFilter {
 				return new ValueSourceScorer(readerContext.reader(), valueSource.getValues(context, readerContext)) {
 
 					@Override
-					public boolean matchesValue(int doc) {
+					public boolean matches(int doc) {
 						return collectorFilterable.matches(doc);
 					}
 
