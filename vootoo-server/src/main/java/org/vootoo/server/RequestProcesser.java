@@ -272,8 +272,9 @@ public class RequestProcesser {
         } finally {
           SolrRequestInfo.clearRequestInfo();
         }
-        MDCLoggingContext.clear();
+
       }
+      MDCLoggingContext.clear();
     }
   }
 
