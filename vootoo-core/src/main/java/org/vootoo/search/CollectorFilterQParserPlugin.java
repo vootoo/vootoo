@@ -26,13 +26,20 @@ import org.apache.solr.search.QParser;
 import org.apache.solr.search.QParserPlugin;
 
 /**
- * not use query cache
- *
+ * CollectorFilter ({@link org.apache.solr.search.PostFilter}). create {@link CollectorFilterQuery}(not use query cache)
+ * <p/>
+ * add solrconfig.xml<br/>
+ * <code>&lt;queryParser name="cf" class="org.vootoo.search.CollectorFilterQParserPlugin"/&gt;</code><p/>
  * example:<p/>
  * <code>fq={!cf name=in}status:(-1, 2)</code><br/>
  * <code>fq={!cf name=in not=true}status:(3,4)</code><br/>
  * <code>fq={!cf name=range}price:[100 TO 500]</code><br/>
- * <code>fq={!cf name=range}log(page_view):[50 TO 120]</code>
+ * <code>fq={!cf name=range}log(page_view):[50 TO 120]</code><br/>
+ * <code>fq={!cf name=range}geodist():[* TO 5]</code><br/>
+ * <code>fq={!cf name=bit}bit_field:(0b01100)</code><br/>
+ * <code>fq={!cf name=bit}bit_field:(0xa)</code><br/>
+ * <code>fq={!cf name=bit}bit_field:(3)</code><br/>
+ * <code>fq={!cf name=cbit}bit_field:(0b01100)</code><br/>
  */
 public class CollectorFilterQParserPlugin extends QParserPlugin {
 
