@@ -28,6 +28,7 @@
       <option name="USE_RELATIVE_INDENTS" value="false" />
     </value>
   </option>
+  <option name="LINE_SEPARATOR" value="&#xA;" />
   <option name="RIGHT_MARGIN" value="160" />
   <XML>
     <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
