@@ -13,8 +13,8 @@
   <name>vootoo-server ${version}</name>
   <dependencies>
     <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
+      <groupId>org.vootoo</groupId>
+      <artifactId>vootoo-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
@@ -34,10 +34,6 @@
     <dependency>
       <groupId>org.vootoo</groupId>
       <artifactId>vootoo-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.vootoo</groupId>
-      <artifactId>vootoo-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.vootoo</groupId>
