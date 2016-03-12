@@ -19,6 +19,7 @@ package org.vootoo.schema;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
@@ -28,7 +29,6 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.uninverting.UninvertingReader;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.core.CoreContainer;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrRequestInfo;
 import org.apache.solr.response.TextResponseWriter;
@@ -42,8 +42,7 @@ import org.apache.solr.util.RefCounted;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * cross core fetch field value source for function sort and transform
@@ -70,7 +69,7 @@ public class CrossCoreField extends FieldType implements SchemaAware {
 
     String subName = name.substring(CROSS_CORE_PREFIX.length());
 
-    List<String> names = Splitter.on('.').omitEmptyStrings().trimResults().splitToList(subName);
+    List<String> names = Lists.newArrayList(Splitter.on('.').omitEmptyStrings().trimResults().split(subName));
     if (names.size() < 2) {
       throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
           CrossCoreField.class.getSimpleName() + "'s field [" + field.getName() + "] must content '.' to split collection and target field");
