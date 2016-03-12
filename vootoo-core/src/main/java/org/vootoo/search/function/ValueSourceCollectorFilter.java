@@ -19,11 +19,7 @@ package org.vootoo.search.function;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.queries.function.ValueSourceScorer;
-import org.apache.lucene.search.BitsFilteredDocIdSet;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.*;
 import org.apache.lucene.util.Bits;
 import org.apache.solr.search.SolrFilter;
 import org.vootoo.search.CollectorFilterable;
@@ -57,7 +53,8 @@ public class ValueSourceCollectorFilter extends SolrFilter {
 	@Override
 	public DocIdSet getDocIdSet(@SuppressWarnings("rawtypes") final Map context, final LeafReaderContext readerContext, Bits acceptDocs) throws IOException {
 		collectorFilterable.doSetNextReader(context, readerContext);
-		return BitsFilteredDocIdSet.wrap(new DocIdSet() {
+    //TODO  check getDocIdSet use
+    return BitsFilteredDocIdSet.wrap(new DocIdSet() {
 			@Override
 			public long ramBytesUsed() {
 				return 0;
@@ -65,14 +62,19 @@ public class ValueSourceCollectorFilter extends SolrFilter {
 
 			@Override
 			public DocIdSetIterator iterator() throws IOException {
-				return new ValueSourceScorer(readerContext.reader(), valueSource.getValues(context, readerContext)) {
-
+				final DocIdSetIterator approximation = DocIdSetIterator.all(readerContext.reader().maxDoc()); // no approximation!
+				TwoPhaseIterator twoPhaseIterator = new TwoPhaseIterator(approximation) {
 					@Override
-					public boolean matchesValue(int doc) {
-						return collectorFilterable.matches(doc);
+					public boolean matches() throws IOException {
+						return collectorFilterable.matches(approximation.docID());
 					}
 
+					@Override
+					public float matchCost() {
+						return 100; // TODO: use cost of ValueSourceScorer.this.matches()
+					}
 				};
+				return TwoPhaseIterator.asDocIdSetIterator(twoPhaseIterator);
 			}
 
 			@Override

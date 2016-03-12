@@ -1,0 +1,78 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<configuration scan="true">
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/out.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/out.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="SOLR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/solr.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/solr.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="QUERY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/query.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/query.log.%d{yyyy-MM-dd}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] rid=%X{rid} path=%X{request_path} core=%X{core} RS=%X{request_size} WT=%X{wait_time} ET=%X{execute_time} r=%X{remote_address} %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger level="DEBUG" name="org.vootoo" />
+	<logger level="DEBUG" name="io.netty" />
+
+	<logger level="INFO" name="org.apache.solr" additivity="false">
+		<appender-ref ref="SOLR" />
+	</logger>
+
+	<!--logger level="INFO" name="org.vootoo.server.request.Update" /-->
+	<logger level="INFO" name="org.vootoo.server.request" additivity="false">
+		<appender-ref ref="QUERY" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="OUT" />
+	</root>
+
+</configuration>
