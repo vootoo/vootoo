@@ -196,12 +196,32 @@ public class CrossCoreFieldTest {
   }
 
   @Test
-  public void test_Return_Cross_Core_Field() {
-    //TODO test cross core 'fl' by transform
-    /*
-        System.out.println(query(MAIN_CORE, "q", "*:*", "sort", "mul(_solr_"+SUB_CORE+".other_i, 2) desc",
-        "fsv","true","indent","on",
-        "fl", "*,other_i:field(_solr_"+SUB_CORE+".other_i)"));
-     */
+  public void test_Return_Cross_Core_Field() throws Exception {
+    update(MAIN_CORE, SolrTestCaseJ4.adoc("id", "1", "my_i", "100"));
+    update(MAIN_CORE, SolrTestCaseJ4.adoc("id", "2", "my_i", "50"));
+    update(MAIN_CORE, "<commit/>");
+
+    assertQ(query(MAIN_CORE, "q", "*:*"),
+        "//result/doc[1]/int[@name='my_i'][.='100']",
+        "//result/doc[2]/int[@name='my_i'][.='50']"
+    );
+
+    update(SUB_CORE, SolrTestCaseJ4.adoc("id", "1", "other_i", "20"));
+    update(SUB_CORE, SolrTestCaseJ4.adoc("id", "2", "other_i", "80"));
+    update(SUB_CORE, "<commit/>");
+
+    assertQ(query(SUB_CORE, "q", "*:*"),
+        "//result/doc[1]/str[@name='id'][.='1']",
+        "//result/doc[2]/str[@name='id'][.='2']"
+    );
+    assertQ(query(MAIN_CORE, "q", "*:*", "sort", "id desc", "fl", "*,other_i:field(_solr_"+SUB_CORE+".other_i)"),
+        "//result/doc[1]/int[@name='other_i'][.='80']",
+        "//result/doc[2]/int[@name='other_i'][.='20']"
+        );
+
+    assertQ(query(MAIN_CORE, "q", "*:*", "sort", "mul(_solr_"+SUB_CORE+".other_i, 2) desc", "fsv", "true", "indent","on"),
+        "//lst[@name='sort_values']/arr/double[1][.='160.0']",
+        "//lst[@name='sort_values']/arr/double[2][.='40.0']"
+        );
   }
 }
