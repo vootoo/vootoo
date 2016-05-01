@@ -274,7 +274,7 @@ public class NettySolrClient extends SolrClient {
     return serverUrl;
   }
 
-  @Override
+  @Deprecated
   public void shutdown () {
     connectionPool.close();
   }
@@ -301,5 +301,10 @@ public class NettySolrClient extends SolrClient {
 
   public void setRequestWriter(RequestWriter requestWriter) {
     this.requestWriter = requestWriter;
+  }
+
+  @Override
+  public void close() throws IOException {
+    connectionPool.close();
   }
 }

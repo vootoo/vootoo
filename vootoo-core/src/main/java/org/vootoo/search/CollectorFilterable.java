@@ -19,6 +19,7 @@ package org.vootoo.search;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.solr.schema.TrieDateField;
+import org.apache.solr.util.DateMathParser;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -131,11 +132,7 @@ public abstract class CollectorFilterable {
 
 		@Override
 		public Object parse(String value) {
-			try {
-				return TrieDateField.parseDate(value);
-			} catch(ParseException e) {
-				throw new RuntimeException("value='" + value + "' parse date error", e);
-			}
+			return DateMathParser.parseMath(null, value);
 		}
 
 	}
