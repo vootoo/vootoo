@@ -86,7 +86,8 @@ public class RandomValueSourceParserTest extends AbstractSolrTestCase {
         failSum += 1;
       }
     }
-    Assert.assertTrue(failSum < 2);
+    logger.info("failSum={}", failSum);
+    Assert.assertTrue(failSum < 5);
     //System.out.println(JQ(req("q","*:*", "fl", "*,rand:rand(20)", "sort", "rand() desc")));
     //System.out.println(JQ(req("q","*:*", "fl", "*,rand:rand(20)", "sort", "rand() desc")));
 
