@@ -266,7 +266,7 @@ public class CrossCoreField extends FieldType implements SchemaAware {
     @Override
     public FunctionValues getValues(Map context, LeafReaderContext readerContext) throws IOException {
       FunctionValues mainValues = mainKeySource.getValues(context, readerContext);
-      FunctionValues targetValues = targetValueSource.getValues(context, targetSolrIndexSearcher.getLeafReader().getContext());
+      FunctionValues targetValues = targetValueSource.getValues(context, targetSolrIndexSearcher.getSlowAtomicReader().getContext());
       return new CrossCoreFunctionValues(mainValues, targetValues);
     }
 
