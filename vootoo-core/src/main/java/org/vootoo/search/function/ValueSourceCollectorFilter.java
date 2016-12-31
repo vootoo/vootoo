@@ -21,6 +21,7 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.*;
 import org.apache.lucene.util.Bits;
+import org.apache.solr.search.BitsFilteredDocIdSet;
 import org.apache.solr.search.SolrFilter;
 import org.vootoo.search.CollectorFilterable;
 import org.vootoo.search.ValueSourceCollectorFilterable;

@@ -88,7 +88,7 @@ public class RangeCollectorFilterable extends CollectorFilterable {
   public void doSetNextReader(@SuppressWarnings("rawtypes") Map context, LeafReaderContext readerContext)
       throws IOException {
     FunctionValues values = getValueSource().getValues(context, readerContext);
-    rangeScorer = values.getRangeScorer(readerContext.reader(),
+    rangeScorer = values.getRangeScorer(readerContext,
         getLowerVal(), getUpperVal(), isIncludeLower(), isIncludeUpper());
   }
 

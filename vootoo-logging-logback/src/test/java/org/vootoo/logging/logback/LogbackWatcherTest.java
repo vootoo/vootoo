@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +41,7 @@ public class LogbackWatcherTest {
   @Before
   public void setUp() {
     config = new LogWatcherConfig(true, LogbackWatcher.class.getName(), null, 50);
-    loader = new SolrResourceLoader(".", Runtime.getRuntime().getClass().getClassLoader(), null);
+    loader = new SolrResourceLoader(Paths.get("."), Runtime.getRuntime().getClass().getClassLoader(), null);
   }
 
   private void sleep(long ms) {
