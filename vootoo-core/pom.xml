@@ -3,11 +3,11 @@
   <parent>
     <artifactId>vootoo</artifactId>
     <groupId>org.vootoo</groupId>
-    <version>0.4.2-SNAPSHOT</version>
+    <version>0.5.0</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>vootoo-core</artifactId>
-    <name>vootoo-core ${version}</name>
+    <name>vootoo-core ${project.version}</name>
   <dependencies>
 	  <dependency>
 		  <groupId>org.apache.solr</groupId>

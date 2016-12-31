@@ -12,7 +12,10 @@
 .DS_Store
 
 # Maven
+target/
+*.versionsBackup
+
+# log
 log/
 logs/
-target/
 *.log

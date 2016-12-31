@@ -43,6 +43,7 @@ import org.vootoo.NamedCoresLocator;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 
@@ -56,7 +57,7 @@ public class CrossCoreFieldTest {
 
   @BeforeClass
   public static void beforeClass() {
-    coreContainer = new CoreContainer(TestHarness.buildTestNodeConfig(new SolrResourceLoader(SolrTestCaseJ4.TEST_HOME())),
+    coreContainer = new CoreContainer(TestHarness.buildTestNodeConfig(new SolrResourceLoader(Paths.get(SolrTestCaseJ4.TEST_HOME()))),
         new Properties(),
         new NamedCoresLocator(MAIN_CORE, SUB_CORE));
     coreContainer.load();

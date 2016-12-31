@@ -60,7 +60,7 @@
     <maxBufferedDocs>10</maxBufferedDocs>
     <mergePolicy class="org.apache.lucene.index.LogDocMergePolicy"/>
     <lockType>native</lockType>
-    <unlockOnStartup>true</unlockOnStartup>
+    <!--unlockOnStartup>true</unlockOnStartup-->
   </indexConfig>
 
   <updateHandler class="solr.DirectUpdateHandler2">
@@ -216,52 +216,7 @@
   </requestHandler>
 
 
-  <requestHandler name="dismax" class="solr.SearchHandler" >
-    <lst name="defaults">
-     <str name="defType">dismax</str>
-     <str name="q.alt">*:*</str>
-     <float name="tie">0.01</float>
-     <str name="qf">
-        text^0.5 features_t^1.0 subject^1.4 title_stemmed^2.0
-     </str>
-     <str name="pf">
-        text^0.2 features_t^1.1 subject^1.4 title_stemmed^2.0 title^1.5
-     </str>
-     <str name="bf">
-        ord(weight)^0.5 recip(rord(iind),1,1000,1000)^0.3
-     </str>
-     <str name="mm">
-        3&lt;-1 5&lt;-2 6&lt;90%
-     </str>
-     <int name="ps">100</int>
-    </lst>
-  </requestHandler>
-
-  <requestHandler name="/admin/" class="org.apache.solr.handler.admin.AdminHandlers" />
-
-  <!-- test query parameter defaults -->
-  <requestHandler name="defaults" class="solr.StandardRequestHandler">
-    <lst name="defaults">
-      <int name="rows">4</int>
-      <bool name="hl">true</bool>
-      <str name="hl.fl">text,name,subject,title,whitetok</str>
-    </lst>
-  </requestHandler>
-
-  <!-- test query parameter defaults -->
-  <requestHandler name="lazy" class="solr.StandardRequestHandler" startup="lazy">
-    <lst name="defaults">
-      <int name="rows">4</int>
-      <bool name="hl">true</bool>
-      <str name="hl.fl">text,name,subject,title,whitetok</str>
-    </lst>
-  </requestHandler>
-
   <requestHandler name="/update" class="solr.UpdateRequestHandler"  />
-
-  <requestHandler name="/mlt" class="solr.MoreLikeThisHandler">
-  </requestHandler>
-
   <!-- enable streaming for testing... -->
   <requestDispatcher handleSelect="true" >
     <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048" />
@@ -269,14 +224,6 @@
       <cacheControl>max-age=30, public</cacheControl>
     </httpCaching>
   </requestDispatcher>
-
-  <!-- Echo the request contents back to the client -->
-  <requestHandler name="/debug/dump" class="solr.DumpRequestHandler" >
-    <lst name="defaults">
-      <str name="echoParams">explicit</str>
-      <str name="echoHandler">true</str>
-    </lst>
-  </requestHandler>
 
   <admin>
     <defaultQuery>solr</defaultQuery>

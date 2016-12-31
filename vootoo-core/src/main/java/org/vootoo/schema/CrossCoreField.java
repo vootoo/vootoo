@@ -26,7 +26,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.uninverting.UninvertingReader;
 import org.apache.lucene.util.BytesRefBuilder;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.core.SolrCore;
@@ -38,6 +37,7 @@ import org.apache.solr.schema.SchemaAware;
 import org.apache.solr.schema.SchemaField;
 import org.apache.solr.search.QParser;
 import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.uninverting.UninvertingReader;
 import org.apache.solr.util.RefCounted;
 
 import java.io.Closeable;
