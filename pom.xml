@@ -3,7 +3,7 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  <version>0.5.1</version>
   <name>vootoo ${project.version}</name>
   <packaging>pom</packaging>
 
@@ -131,6 +131,7 @@
   	<connection>scm:git:git://github.com/vootoo/vootoo.git</connection>
     <developerConnection>scm:git:git@github.com:vootoo/vootoo.git</developerConnection>
     <url>https://github.com/vootoo/vootoo/tree/master</url>
+    <tag>vootoo-0.5.1</tag>
   </scm>
   <organization>
     <name>vootoo</name>
