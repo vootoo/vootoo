@@ -321,6 +321,21 @@
           <goals>deploy</goals>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <!-- see http://jgitflow.bitbucket.org/ -->
+          <pullDevelop>false</pullDevelop>
+          <pullMaster>false</pullMaster>
+          <pushFeatures>false</pushFeatures>
+          <pushReleases>false</pushReleases>
+          <pushHotfixes>false</pushHotfixes>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
   	</plugins>
   </build>
   <modules>
