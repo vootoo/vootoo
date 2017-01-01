@@ -332,7 +332,6 @@
           <pushReleases>false</pushReleases>
           <pushHotfixes>false</pushHotfixes>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <noDeploy>true</noDeploy>
         </configuration>
       </plugin>
   	</plugins>
