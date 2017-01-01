@@ -131,7 +131,6 @@
   	<connection>scm:git:git://github.com/vootoo/vootoo.git</connection>
     <developerConnection>scm:git:git@github.com:vootoo/vootoo.git</developerConnection>
     <url>https://github.com/vootoo/vootoo/tree/master</url>
-    <tag>HEAD</tag>
   </scm>
   <organization>
     <name>vootoo</name>
