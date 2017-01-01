@@ -3,7 +3,7 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.5.3-SNAPSHOT</version>
+  <version>0.5.2</version>
   <name>vootoo ${project.version}</name>
   <packaging>pom</packaging>
 
