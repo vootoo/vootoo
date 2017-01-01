@@ -3,7 +3,7 @@
   <parent>
     <artifactId>vootoo</artifactId>
     <groupId>org.vootoo</groupId>
-    <version>0.5.2</version>
+    <version>0.5.3-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>vootoo-core</artifactId>
