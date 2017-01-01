@@ -3,7 +3,7 @@
 
   <groupId>org.vootoo</groupId>
   <artifactId>vootoo</artifactId>
-  <version>0.5.2-SNAPSHOT</version>
+  <version>0.5.2</version>
   <name>vootoo ${project.version}</name>
   <packaging>pom</packaging>
 
@@ -108,17 +108,17 @@
       <dependency>
         <groupId>org.vootoo</groupId>
         <artifactId>vootoo-client</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.vootoo</groupId>
         <artifactId>vootoo-core</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.vootoo</groupId>
         <artifactId>vootoo-logging-logback</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
@@ -131,7 +131,6 @@
   	<connection>scm:git:git://github.com/vootoo/vootoo.git</connection>
     <developerConnection>scm:git:git@github.com:vootoo/vootoo.git</developerConnection>
     <url>https://github.com/vootoo/vootoo/tree/master</url>
-    <tag>HEAD</tag>
   </scm>
   <organization>
     <name>vootoo</name>
@@ -319,6 +318,20 @@
           <useReleaseProfile>false</useReleaseProfile>
           <releaseProfiles>release</releaseProfiles>
           <goals>deploy</goals>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <!-- see http://jgitflow.bitbucket.org/ -->
+          <pullDevelop>false</pullDevelop>
+          <pullMaster>false</pullMaster>
+          <pushFeatures>false</pushFeatures>
+          <pushReleases>false</pushReleases>
+          <pushHotfixes>false</pushHotfixes>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
   	</plugins>
