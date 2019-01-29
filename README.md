@@ -11,3 +11,13 @@ vootoo play with solr
 ## 其它
 
  * [bug 提交](https://github.com/vootoo/vootoo/issues/new)
+ 
+## Dev
+
+```
+#执行单元测试，代码覆盖报表
+mvn clean test
+
+#验证单元测试覆盖率
+mvn clean verify
+```
